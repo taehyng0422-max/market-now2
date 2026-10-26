@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>마켓나우 | 가을 쇼핑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--or:#BE5103;--or2:#B7410E;--ye:#FFCE1B;--teal:#069494;--ink:#1d1916;--sub:#8a7f77;--bg:#f7f4ef;--card:#fff;--soft:#f0eae2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;overflow-wrap:anywhere;min-height:100vh;position:relative}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:60}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit;border:0;outline:none}
+button{cursor:pointer;background:none}
+.wrap{width:min(1200px,92%);margin:0 auto;position:relative;z-index:2}
+
+/* 배경 낙엽: 천천히 흔들리며 떨어짐 */
+.leaf{position:fixed;top:-40px;font-size:18px;opacity:.3;pointer-events:none;z-index:1;animation:drift linear infinite}
+@keyframes drift{0%{transform:translate3d(0,-10vh,0) rotate(0)}50%{transform:translate3d(16px,50vh,0) rotate(160deg)}100%{transform:translate3d(-12px,110vh,0) rotate(340deg)}}
+@media (prefers-reduced-motion:reduce){.leaf{display:none}}
+
+/* 헤더 */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);box-shadow:0 1px 14px rgba(0,0,0,.04)}
+.top{display:flex;align-items:center;gap:16px;padding:12px 0;flex-wrap:wrap}
+.logo{font-size:21px;font-weight:900;color:var(--or);white-space:nowrap;flex:none}
+.cat-open{background:var(--or);color:#fff;font-weight:700;font-size:15px;padding:10px 18px;border-radius:999px;white-space:nowrap;flex:none}
+.cat-open:hover{background:var(--or)}
+.search{flex:1 1 260px;display:flex;background:var(--soft);border-radius:999px;overflow:hidden;max-width:620px}
+.search input{flex:1;min-width:0;background:transparent;padding:11px 18px}
+.search button{background:transparent;color:var(--or);font-weight:700;padding:0 18px;flex:none}
+.icons{display:flex;align-items:center;gap:18px;font-size:13px;white-space:nowrap;margin-left:auto;flex:none;color:#5a504a}
+.icons a{position:relative}
+.icons a{padding:7px 14px;border-radius:999px;transition:background .25s,color .25s}
+.icons a:hover,.icons a:focus-visible,.icons a:active{background:var(--or);color:#fff}
+.badge{position:absolute;top:-8px;right:-12px;background:var(--or);color:#fff;border-radius:10px;font-size:11px;padding:0 5px;min-width:18px;text-align:center}
+
+/* 배너 */
+.ad,.hero{position:relative;overflow:hidden;touch-action:pan-y;user-select:none}
+.ad{background:var(--ink)}
+.track{display:flex;transition:transform .5s ease}
+.slide{position:relative;min-width:100%;color:#fff;display:flex;align-items:center;padding:0 28px;overflow:hidden}
+.slide small{opacity:.85;display:block;font-weight:300}
+.slide h3{font-size:18px;font-weight:700;position:relative}
+.deco{position:absolute;right:50px;font-size:110px;opacity:.22;pointer-events:none}
+.ad .slide{min-height:52px;padding:10px 44px 22px}
+.ad .slide h3{font-size:14px;font-weight:500}
+.ad .deco{display:none}
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:18px;line-height:30px;text-align:center;z-index:2}
+.arr.l{left:10px}.arr.r{right:10px}
+.dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45)}
+.dots i.on{background:#fff}
+.hero{border-radius:22px;margin-top:18px}
+.hero .slide{min-height:280px;padding:24px 60px 42px}
+.hero .slide h3{font-size:32px;font-weight:900;line-height:1.3}
+
+/* 카테고리 드로어 */
+.overlay{position:fixed;inset:0;background:rgba(29,25,22,.35);opacity:0;pointer-events:none;transition:opacity .25s;z-index:150}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(340px,86vw);background:#fff;z-index:160;transform:translateX(-102%);transition:transform .3s;display:flex;flex-direction:column;box-shadow:10px 0 30px rgba(0,0,0,.08)}
+.drawer.open{transform:none}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;font-size:17px;font-weight:700}
+.dh button{font-size:18px;padding:0 4px;color:var(--sub)}
+#catList{list-style:none;overflow-y:auto;flex:1;padding:4px 0}
+#catList a{display:block;padding:12px 22px;border-radius:10px;margin:0 8px}
+#catList a:hover{background:#fff1e3;color:var(--or)}
+.ed-row{display:flex;align-items:center;gap:6px;padding:9px 14px;margin:0 8px 4px;border-radius:10px;background:var(--soft);cursor:grab}
+.ed-row.over{background:#ffe5cc}
+.ed-row label{flex:1;display:flex;gap:8px;align-items:center;min-width:0}
+.ed-row button{width:28px;height:28px;border-radius:6px;background:#fff;flex:none}
+.dquick{display:flex;justify-content:space-around;padding:14px 16px;font-size:13px;color:var(--sub)}
+.dfoot{padding:8px 16px 18px;display:flex;gap:8px}
+
+/* 공통 버튼/폼 */
+.btn{display:block;width:100%;padding:14px;background:var(--or);color:#fff;border-radius:999px;font-weight:700;font-size:15px;margin-top:18px;text-align:center}
+.btn:hover{background:var(--or2)}
+.btn.inline{display:inline-block;width:auto;padding:11px 22px;margin-top:0}
+.ed{flex:1;padding:13px;border-radius:999px;background:var(--or);color:#fff;font-weight:700;text-align:center}
+.ed:hover{background:var(--or2)}
+.ed.ghost{background:var(--soft);color:var(--ink)}
+.form{width:100%;max-width:440px;margin:28px auto;background:#fff;border-radius:22px;padding:34px;box-shadow:0 8px 30px rgba(60,40,20,.05)}
+.form h2{font-size:22px;margin-bottom:6px}
+.form label{display:block;font-size:13px;color:#6b615a;margin:16px 0 6px}
+.form .check{display:flex;gap:8px;align-items:center;margin-top:14px;font-size:14px}
+.form input,.form select,.form textarea{width:100%;padding:13px 14px;border-radius:12px;background:var(--soft)}
+.form input:focus,.form textarea:focus{box-shadow:0 0 0 2px var(--or2)}
+.form input[type=checkbox]{width:auto}
+.err{color:#c4441a;font-size:13px;min-height:18px;margin-top:8px}
+.muted{color:var(--sub);font-size:13px}
+
+/* 본문 */
+main{padding:0 0 48px;min-height:60vh}
+.home{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:24px;align-items:start}
+.main-col{min-width:0}
+.sec{background:var(--card);border-radius:22px;padding:26px;margin-top:20px;box-shadow:0 8px 28px rgba(60,40,20,.04)}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.sh h2{font-size:19px;font-weight:700}
+.sh .sub{font-size:13px;color:var(--sub)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px 14px}
+.card{background:#fff;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;min-width:0;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(60,40,20,.08)}
+.cl{display:block;flex:1}
+.thumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:62px;background:linear-gradient(160deg,#fff4e6,#ffe3c4);border-radius:16px;margin:6px}
+.pinfo{padding:10px 12px 4px}
+.pname{font-size:14px;line-height:20px;margin-bottom:4px}
+.rs{font-size:12px;color:var(--sub);margin-bottom:4px}
+.price{font-weight:700;font-size:17px}
+.rate{color:var(--or);font-weight:700;margin-right:6px}
+.orig{text-decoration:line-through;color:#b9ada2;font-size:12px}
+.tag{font-size:11px;color:var(--or);background:#fff0e0;padding:1px 7px;border-radius:999px;display:inline-block;margin-top:4px}
+.add{margin:6px 12px 12px;padding:9px;background:var(--soft);color:var(--ink);border-radius:999px;font-weight:700;text-align:center;font-size:14px}
+.add:hover{background:var(--or);color:#fff}
+.hscroll{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll>.card{flex:0 0 170px;scroll-snap-align:start}
+.disc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.dcard{background:linear-gradient(160deg,#fff4e6,#ffe0bd);border-radius:20px;padding:20px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s}
+.dcard:hover{transform:translateY(-3px)}
+.dcard .de{font-size:40px}
+.dcard b{display:block;font-size:15px;margin:10px 0 4px;line-height:1.4}
+.dcard small{color:#6b5a4c;font-size:12.5px;line-height:1.5;display:block}
+.dcard em{font-style:normal;font-size:12px;color:#7a4a1e;margin-top:10px}
+
+/* 오른쪽 박스 */
+.side{position:sticky;top:112px;display:grid;gap:14px}
+.pbox{border-radius:22px;padding:22px;color:#fff;min-height:128px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s}
+.pbox:hover{transform:translateY(-3px)}
+.pbox small{font-size:12px;opacity:.85}
+.pbox b{font-size:18px;font-weight:700;line-height:1.35;margin:6px 0}
+.pbox span{font-size:13px;opacity:.92}
+.pbox.seller{background:linear-gradient(135deg,#2e2119,#5b3d28)}
+.pbox.autumn{background:linear-gradient(135deg,#e8731a,#f5b544)}
+.pbox.deal{background:linear-gradient(135deg,#b8481a,#7a2e12)}
+
+/* 여행 테마 */
+.hero-t{background:linear-gradient(120deg,#e8731a,#f5b544);color:#fff;border-radius:22px;padding:34px 30px;margin-top:18px;position:relative;overflow:hidden}
+.hero-t h1{font-size:28px;font-weight:900;margin-bottom:6px}
+.hero-t p{opacity:.92;font-size:14px}
+.hero-t .big{position:absolute;right:26px;bottom:-10px;font-size:110px;opacity:.25}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;background:#fff;border-radius:999px;padding:6px;box-shadow:0 8px 24px rgba(60,40,20,.05)}
+.chips a{padding:9px 16px;border-radius:999px;font-size:13px;color:#5a504a;white-space:nowrap}
+.chips a.on,.chips a:hover{background:var(--or);color:#fff}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+/* 상품 상세 */
+.pd{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}
+.thumb.big{height:360px;font-size:150px;border-radius:22px;margin:0}
+.crumb{margin-bottom:6px}
+.pd h1{font-size:24px;line-height:1.35;margin-bottom:8px;font-weight:700}
+.desc{color:#6b615a;margin-bottom:12px}
+.stars{color:#e8a31a;font-size:17px;letter-spacing:2px}
+.stars b{color:var(--ink);font-size:15px;letter-spacing:0;margin-left:4px}
+.thumbs{display:inline-block;margin:10px 0;padding:8px 14px;background:#fff0e0;border-radius:999px;font-size:14px}
+.thumbs b{color:#b8481a}
+.pprice{margin-top:12px}
+.pprice .price{font-size:28px;font-weight:900;color:var(--ink)}
+.opts{margin-top:18px;display:grid;gap:14px}
+.opts label{font-size:14px;font-weight:500}
+.opts select{width:100%;padding:13px 14px;border-radius:12px;background:var(--soft);margin-top:6px}
+.sizes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.sz{position:relative}
+.sz input{position:absolute;opacity:0;pointer-events:none}
+.sz span{display:block;min-width:56px;text-align:center;padding:10px 12px;border-radius:999px;background:var(--soft);cursor:pointer;font-weight:500}
+.sz input:checked+span{background:var(--or);color:#fff}
+.qty{display:flex;align-items:center;gap:6px;margin-top:14px}
+.qty button{width:32px;height:32px;border-radius:999px;background:var(--soft);font-size:16px}
+.qty span{display:inline-block;width:40px;text-align:center;font-weight:700}
+.total{margin-top:14px;font-size:15px}
+.total b{font-size:20px;color:#b8481a}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.actions .fav{grid-column:1/-1;padding:13px;border-radius:999px;background:var(--soft);font-weight:700}
+.actions .fav.on{background:#ffe9d6;color:#b8481a}
+.subh{font-size:18px;font-weight:700;margin-bottom:12px}
+.rv{padding:14px 0}
+.rv+.rv{border-top:0;box-shadow:inset 0 1px 0 #f5efe8}
+.rv .who{font-weight:700;font-size:14px}
+.rv .txt{margin:6px 0;color:#4e4640;font-size:14px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;font-size:14px}
+th,td{padding:12px 10px;text-align:center;vertical-align:middle}
+th:first-child,td:first-child{text-align:left;color:#6b615a;white-space:nowrap}
+th a{color:var(--ink);font-weight:700}
+tr:nth-child(even) td{background:#faf6f0}
+.ce{font-size:30px;display:block}
+details{padding:12px 4px;margin-top:4px}
+summary{cursor:pointer;font-weight:500}
+details p{color:#4e4640;margin-top:8px;font-size:14px}
+.guide{margin-top:10px;font-size:13px}
+.guide td,.guide th{padding:6px}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.menu a,.menu button{border-radius:16px;padding:18px;text-align:center;background:var(--soft)}
+.menu a:hover{background:#ffe3c4}
+.values{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.values div{background:var(--soft);border-radius:16px;padding:20px}
+.values b{display:block;color:#b8481a;font-size:17px;margin-bottom:6px}
+.row{display:flex;gap:14px;align-items:center;padding:14px 0}
+.row .thumb{width:90px;height:90px;font-size:40px;flex:none;margin:0}
+.row .info{flex:1;min-width:0}
+.sum{background:var(--soft);border-radius:16px;padding:16px;margin-top:16px}
+.sum div{display:flex;justify-content:space-between;margin:6px 0}
+.sum .total{font-size:18px;font-weight:900;color:#b8481a}
+.empty{text-align:center;padding:60px 0;color:var(--sub)}
+
+.backbar{margin-top:18px}
+.back{background:#fff;color:var(--ink);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:500;box-shadow:0 4px 14px rgba(60,40,20,.06)}
+.back:hover{background:var(--or);color:#fff}
+.foot-top{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap}
+.foot-info{flex:1 1 360px;min-width:0}
+.foot-boxes{display:grid;gap:12px;width:300px;max-width:100%}
+.foot-boxes .pbox{min-height:92px;padding:16px 20px;border-radius:18px}
+.foot-boxes .pbox b{font-size:16px;margin:4px 0}
+@media (max-width:760px){.foot-boxes{width:100%;grid-template-columns:repeat(3,1fr)}.foot-boxes .pbox{min-height:110px;padding:14px}.foot-boxes .pbox b{font-size:14px}}
+/* 푸터 */
+footer{background:#2b221c;color:#e9dfd5;padding:30px 0;font-size:13px;margin-top:30px}
+footer a{color:#fff}
+footer p+p{margin-top:8px;opacity:.7}
+.sns{display:flex;gap:12px;margin:14px 0 6px;flex-wrap:wrap}
+.sns a{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#e9dfd5;transition:background .2s}
+.sns a:hover{background:var(--or);color:#fff}
+.sns svg{width:19px;height:19px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:999px;opacity:0;transition:.3s;pointer-events:none;z-index:300;width:max-content;max-width:90vw;text-align:center;font-size:14px}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  .home{grid-template-columns:1fr}
+  .side{position:static;grid-template-columns:repeat(3,1fr)}
+  .pbox{min-height:110px;padding:16px}
+  .pbox b{font-size:15px}
+  .disc-grid{grid-template-columns:repeat(2,1fr)}
+  .tgrid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  .top{gap:10px;padding:10px 0}
+  .logo{font-size:19px}
+  .cat-open{font-size:14px;padding:9px 14px}
+  .search{order:3;flex:1 1 100%;max-width:none}
+  .icons{order:4;width:100%;margin-left:0;justify-content:center;gap:16px;flex-wrap:nowrap}
+  .hide-m{display:none}
+  .ad .slide{padding:10px 40px 22px}
+  .hero .slide{min-height:220px;padding:20px 22px 40px}
+  .hero .slide h3{font-size:22px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:14px 10px}
+  .pd{grid-template-columns:1fr;gap:18px}
+  .thumb.big{height:260px;font-size:110px}
+  .values{grid-template-columns:1fr}
+  .sec{padding:18px}
+  .tgrid{grid-template-columns:1fr}
+  .hero-t h1{font-size:22px}
+  .pbox small{font-size:11px}
+  .pbox span{font-size:12px}
+}
+/* 오른쪽 세로형 배너 (쿠팡 스타일) */
+.side{position:sticky;top:112px;display:grid;gap:12px;align-self:start}
+.pbox{position:relative;min-height:220px;border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;overflow:hidden;transition:transform .25s;color:#fff}
+.pbox:hover{transform:translateY(-3px)}
+.pbox small{font-size:12px;opacity:.85;font-weight:500}
+.pbox b{position:relative;z-index:1;font-size:19px;font-weight:900;line-height:1.3;margin-top:6px;max-width:80%;word-break:keep-all}
+.pbox .ico{position:absolute;right:8px;bottom:58px;font-size:72px;line-height:1;transform:rotate(-8deg);opacity:.95}
+.pbox .go{margin-top:auto;position:relative;z-index:1;width:30px;height:30px;border-radius:50%;background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;line-height:1;padding-bottom:2px}
+.pbox.seller{background:#f5c842;color:#2a1d10}
+.pbox.seller .go{color:#2a1d10}
+.pbox.autumn{background:linear-gradient(170deg,#f2893a,#d8541a)}
+.pbox.deal{background:linear-gradient(170deg,#4a3224,#2b1d14)}
+@media (max-width:900px){.side{position:static;grid-template-columns:repeat(3,1fr)}.pbox{min-height:170px}.pbox b{font-size:15px}.pbox .ico{font-size:48px;bottom:50px}}
+@media (max-width:760px){.side{gap:8px}.pbox{min-height:150px;padding:14px 12px}.pbox b{font-size:13px}.pbox .ico{font-size:40px;bottom:46px}.pbox .go{width:26px;height:26px;font-size:15px}}
+.more{margin-left:auto;font-size:13px;font-weight:700;color:var(--or);padding:6px 14px;background:#fff0e0;border-radius:999px;white-space:nowrap}
+.more:hover{background:var(--or);color:#fff}
+.side{position:sticky;top:150px;margin-top:20px}
+@media (max-width:900px){.side{position:static;margin-top:22px}}
+.backbar{position:fixed;top:140px;left:max(14px,calc(50% - 620px));z-index:90;margin:0}
+.backbar[hidden]{display:none}
+.backbar .back{box-shadow:0 8px 24px rgba(60,40,20,.16)}
+
+.kicker{display:block;font-size:12px;font-weight:700;color:var(--or);margin-bottom:4px}
+.brand .sh h2{font-size:20px}
+/* 빈칸 없는 상품 격자: 마지막 줄 상품이 적어도 가로를 채움 */
+.grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tgrid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+@media (max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.grid>.card:last-child:nth-child(odd){grid-column:1/-1}}
+.fastbar{background:#fff4ec;padding:9px 0}
+.fb-in{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.fbox{flex:none;font-size:13px;font-weight:700;padding:7px 14px;border-radius:999px;background:#fff;color:#b8400f}
+.fbox.f1{background:var(--or);color:#fff}
+.sellpill{background:transparent;color:#5a504a;padding:7px 14px;border-radius:999px;font-weight:500;transition:background .25s,color .25s}
+
+.sellpill:hover{background:var(--or2)}
+.catgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin-top:18px;background:#fff;border-radius:22px;padding:18px 10px}
+.catgrid a{text-align:center;font-size:12px;font-weight:500;color:#4e4640;display:flex;flex-direction:column;gap:6px;align-items:center}
+.catgrid span{width:52px;height:52px;border-radius:18px;background:linear-gradient(160deg,#fff1e4,#ffdcc0);display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .2s}
+.catgrid a:hover span{transform:translateY(-3px);background:var(--or)}
+.pop{position:fixed;inset:0;background:rgba(43,26,16,.55);display:flex;align-items:center;justify-content:center;z-index:400;padding:20px}
+.pop[hidden]{display:none}
+.pop-card{position:relative;background:linear-gradient(160deg,#ff5a1f,#ffb020);color:#fff;border-radius:26px;padding:34px 30px;max-width:380px;width:100%;box-shadow:0 30px 60px rgba(0,0,0,.25)}
+.pop-card h2{font-size:28px;font-weight:900;line-height:1.25;margin:12px 0}
+.pop-card p{opacity:.95;font-size:14px}
+.pop-tag{background:#fff;color:#ff5a1f;font-weight:700;font-size:12px;padding:4px 10px;border-radius:999px}
+.pop-x{position:absolute;top:14px;right:16px;color:#fff;font-size:18px}
+.pop-btns{display:flex;gap:12px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.pop-card .btn.inline{background:#fff;color:#ff5a1f}
+.pop-later{color:#fff;font-size:13px;text-decoration:underline}
+@media (max-width:760px){.catgrid{grid-template-columns:repeat(5,1fr)}.catgrid span{width:46px;height:46px}}
+/* 상품 박스: 처음부터 모두 같은 크기 */
+.grid>.card:last-child:nth-child(odd){grid-column:auto}
+.pname{min-height:40px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.filltile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:18px;background:var(--soft);padding:18px;text-align:center;color:var(--ink);min-height:200px}
+.filltile span{font-size:34px}
+.filltile b{font-size:14px;font-weight:700}
+.filltile em{font-style:normal;font-size:12px;color:var(--or);font-weight:700}
+/* 상단 빠른배송: 반으로 나뉜 배너 3개 */
+.fastbar{background:#fff;padding:10px 0}
+.fb-in{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;overflow:visible}
+.sbanner{display:grid;grid-template-columns:1fr 1fr;height:50px;border-radius:12px;overflow:hidden}
+.half{display:flex;align-items:center;gap:8px;padding:0 16px;font-size:14px;font-weight:700;white-space:nowrap;min-width:0}
+.half i{font-style:normal;font-size:18px}
+.half em{font-style:normal;margin-left:auto;font-size:20px}
+.half.l{background:#dff3fd;color:#0d4e7a}
+.half.r{background:var(--or);color:#fff}
+.b2 .half.l{background:#fff0d6;color:#7a4a10}
+.b2 .half.r{background:var(--ink)}
+.b3 .half.l{background:#e7f6ec;color:#1d5a2b}
+.b3 .half.r{background:#2b1a10}
+@media (max-width:760px){.fb-in{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:250px;overflow-x:auto;scrollbar-width:none}.half{font-size:12px;padding:0 10px}}
+/* 상단 빠른배송·무료배송: 한 줄 박스 */
+.lbox{display:flex;align-items:center;gap:10px;height:48px;padding:0 18px;border-radius:12px;font-size:14px;white-space:nowrap;overflow:hidden;color:var(--ink)}
+.lbox i{font-style:normal;font-size:18px}
+.lbox b{font-weight:700}
+.lbox span{opacity:.85;overflow:hidden;text-overflow:ellipsis}
+.lbox em{font-style:normal;margin-left:auto;font-size:20px;color:var(--or);font-weight:700}
+.lbox.b1{background:#dff3fd}
+.lbox.b2{background:#fff0d6}
+@media (max-width:760px){.lbox{font-size:12px;padding:0 12px;gap:6px}.lbox i{font-size:15px}}
+.bgrid{grid-template-columns:repeat(4,1fr)}
+.bgrid .thumb{height:170px}
+@media (max-width:900px){.bgrid{grid-template-columns:repeat(2,1fr)}}
+.mdet{margin-top:14px;text-align:center}
+.mdet summary{display:inline-block;padding:11px 22px;background:var(--or);color:#fff;border-radius:999px;font-weight:700;cursor:pointer;list-style:none}
+.mdet summary::-webkit-details-marker{display:none}
+.mdet[open] summary{background:var(--ink)}
+.mdet .grid{margin-top:14px;text-align:left}
+.mp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mp-stats a{background:var(--soft);border-radius:16px;padding:16px;text-align:center;font-size:13px;color:#5a504a}
+.mp-stats b{display:block;font-size:20px;color:var(--ink);margin-bottom:2px}
+.mp-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;font-size:13px;color:#5a504a}
+.mp-steps b{display:block;font-size:22px;color:var(--or)}
+@media (max-width:760px){.mp-stats,.mp-steps{grid-template-columns:repeat(2,1fr)}}
+/* 로고 이미지 */
+.logo img{height:40px;width:auto;display:block}
+@media (max-width:760px){.logo img{height:32px}}
+/* 카테고리 아이콘: 팔레트 색 원형 */
+.catgrid span{border-radius:50%;width:56px;height:56px}
+.catgrid a:nth-child(4n+1) span{background:var(--or)}
+.catgrid a:nth-child(4n+2) span{background:var(--ye)}
+.catgrid a:nth-child(4n+3) span{background:var(--teal)}
+.catgrid a:nth-child(4n+4) span{background:var(--or2)}
+@media (max-width:760px){.catgrid span{width:46px;height:46px}}
+/* 오른쪽 박스·팝업: Retro sunset 팔레트 */
+.pbox.seller{background:var(--ye);color:#3a2000}
+.pbox.seller .go{color:#3a2000}
+.pbox.autumn{background:linear-gradient(170deg,#D9860C,var(--or2))}
+.pbox.deal{background:linear-gradient(170deg,var(--teal),#045E5E)}
+.pop-card{background:linear-gradient(160deg,var(--or2),var(--or) 55%,var(--teal))}
+/* 둘째 줄: 전체 카테고리 + 탭 메뉴 */
+.navrow{display:flex;align-items:center;gap:4px;padding:2px 0 10px;overflow-x:auto;scrollbar-width:none}
+.navrow::-webkit-scrollbar{display:none}
+.navrow .cat-open{margin-right:12px}
+.navrow .tab{padding:8px 14px;font-weight:700;font-size:15px;color:#3a2a20;white-space:nowrap;border-radius:999px}
+.navrow .tab:hover,.navrow .tab.on{color:var(--or)}
+/* 히어로 텍스트와 점 */
+.hero .slide small{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.dots i{width:8px;height:8px}
+.dots i.on{background:var(--ye)}
+/* 카테고리 패널 */
+.catgrid{background:#f6f1ea}
+/* 상품 카드 배지와 하트 */
+.card{position:relative}
+.bdg{position:absolute;top:12px;left:12px;z-index:2;font-size:11px;font-weight:900;color:#fff;background:var(--or);padding:3px 9px;border-radius:6px}
+.bdg.sale{background:var(--teal)}
+.bdg.new{background:var(--ye);color:#3a2000}
+.hrt{position:absolute;top:8px;right:10px;z-index:2;font-size:20px;line-height:1;color:var(--or);background:rgba(255,255,255,.9);width:34px;height:34px;border-radius:50%}
+/* 섹션 제목 크게 */
+.brand .sh h2{font-size:26px;font-weight:900}
+@media (max-width:760px){.navrow .tab{padding:7px 11px;font-size:14px}.brand .sh h2{font-size:21px}}
+/* 언어 선택 버튼 (푸터) */
+.langs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 6px}
+.langs button{padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.12);color:#e9dfd5;font-size:13px;font-weight:500}
+.langs button:hover{background:rgba(255,255,255,.22)}
+.langs button.on{background:var(--or);color:#fff;font-weight:700}
+/* PC 상단: 로고 · 중앙 메뉴(로그인~장바구니) · 검색 */
+@media (min-width:761px){
+  .top{display:grid;grid-template-columns:200px 1fr 320px;align-items:center;gap:16px}
+  .logo{grid-column:1}
+  .icons{grid-column:2;justify-self:center;margin:0;gap:18px}
+  .search{grid-column:3;max-width:none;flex:none}
+}
+/* 빠른 배송 박스: 전체 폭 한 줄 */
+.fb-in{grid-template-columns:1fr}
+.fb-in .lbox{height:52px;font-size:15px;justify-content:flex-start}
+.navrow{gap:8px}
+/* 헤더 재배치 (PC): 1줄 로고 + 긴 검색창 / 2줄 메뉴(로그인~장바구니) 중앙 / 3줄 카테고리·탭 중앙 */
+@media (min-width:761px){
+  .top{display:grid;grid-template-columns:200px 1fr;align-items:center;gap:12px 24px;padding:12px 0 8px}
+  .logo{grid-column:1;grid-row:1}
+  .search{grid-column:2;grid-row:1;max-width:none;flex:none;width:100%}
+  .icons{grid-column:1 / -1;grid-row:2;justify-self:center;margin:0;gap:22px}
+  .navrow{justify-content:center;padding:4px 0 12px}
+}
+/* 휴대폰: 세로 쌓기, 모두 가운데 정렬 */
+@media (max-width:760px){
+  .top{justify-content:center;gap:10px}
+  .logo{width:100%;display:flex;justify-content:center}
+  .search{order:2;flex:1 1 100%;max-width:none}
+  .icons{order:3;width:100%;justify-content:center}
+  .navrow{justify-content:safe center;padding:2px 0 10px}
+}
+/* 헤더 줄: 좌우 여백을 두고 가로를 꽉 채움 (로그인 줄 · 카테고리 줄) */
+header .wrap{width:auto;max-width:none;margin:0 16px}
+@media (min-width:761px){
+  .icons{justify-self:stretch;width:100%;justify-content:space-between;gap:0;margin:0}
+  .navrow{display:grid;grid-template-columns:auto repeat(5,1fr);gap:6px;align-items:center}
+  .navrow .tab{text-align:center}
+}
+@media (max-width:760px){
+  header .wrap{margin:0 12px}
+  .icons{justify-content:space-evenly;gap:0;width:100%}
+  .navrow{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;overflow:visible}
+  .navrow .cat-open{grid-column:1 / -1;width:100%;margin:0}
+  .navrow .tab{padding:8px 2px;font-size:13px;text-align:center}
+}
+/* 휴대폰: 로그인 줄은 오른쪽 정렬, 전체 카테고리 버튼은 탭 줄(홈~기획전) 아래 */
+@media (max-width:760px){
+  .icons{justify-content:flex-end;gap:12px;width:100%}
+  .navrow .cat-open{order:2}
+}
+/* PC: 로그인부터 장바구니까지 오른쪽 끝 정렬 */
+@media (min-width:761px){
+  .icons{justify-content:flex-end;gap:22px;width:100%}
+}
+/* 텍스트 사이 여백 좁힘 */
+@media (min-width:761px){ .icons{gap:10px} }
+@media (max-width:760px){ .icons{gap:8px} }
+/* PC: 로그인 줄은 신상품 칸부터 시작, 장바구니는 기획전 칸 끝에 맞춤 (카테고리 줄과 같은 칸 구조) */
+@media (min-width:761px){
+  .navrow{display:grid;grid-template-columns:180px repeat(5,1fr);gap:6px;align-items:center}
+  .navrow .cat-open{width:180px;margin:0}
+  .navrow .tab:nth-child(4){text-align:left}
+  .navrow .tab:nth-child(6){text-align:right}
+  .icons{grid-column:1 / -1;display:grid;grid-template-columns:180px repeat(5,1fr);gap:6px;width:100%;justify-self:stretch;margin:0}
+  .icons .ig{grid-column:4 / -1;display:flex;justify-content:space-between;align-items:center;gap:10px}
+}
+/* PC(1180px 이상): 카테고리 줄과 로그인 줄 간격을 24px로 통일, 신상품~기획전 칸에 로그인~장바구니를 맞춤 */
+@media (min-width:761px){
+  .navrow{display:flex;justify-content:space-between;align-items:center;gap:0}
+  .navrow .tab:nth-child(4),.navrow .tab:nth-child(6){text-align:center}
+  .navrow .cat-open{width:150px;flex:none;margin:0;padding:11px 0;white-space:nowrap}
+  .navrow .tab{width:auto;flex:none;padding:8px 14px;text-align:center}
+  .icons{display:flex;width:100%;margin:0;justify-content:flex-start;white-space:nowrap}
+  .icons .ig{display:flex;justify-content:space-between;align-items:center;flex:none}
+  .icons .ig a:last-child{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  
+  <div class="wrap top">
+    <a class="logo" href="#/home" aria-label="마켓나우 홈"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWgAAABECAIAAAAjnjh7AABrW0lEQVR42o29d7xtVXUvPr5jrrXLqbd3+qWpVEFUQMWCit331MQYX2xBjcbElGc00URjYl7sMQZjNzE+DXbUKEJsoIKAgID0ei+3t1P22XutOcbvj1nX2uf6fujn45V7zt6rzDnmKN8CtZaYdTA3vPIz1S0/tIv7iYhESZVARCBSIiVmYkOkJGom1xRHn1ae8bRi69lEpGIJAEFJiUBERAoC+Y9QIv85SgQCwkdT9vON/5d+q/nn+EnxHyUixA8NH5H9rhJAmv+mihKQPsTdpKr/5eYFKwEAxU/IfyX/l0jXg/xaqf3vtXn9/ur9F6mm31IloPUo4i1o80Ma1+w/Mz0LXe4n3V83f1GJ3NMCNLxEja+GoKThklovI//2/DPD5zbu2r9/AOGztXV37ls0e4zuycDfWXpERAQs94jaK8o/6vwJp+sGlBSN5Re/kxgIX9W+heZrImq/E/+J6u+o9U7bl62q2brU8MPZNxK5ZTK2VNzvpccIQFVIJbt1+Ler6UrC57RfIgiS3p/6R6TNr7Cq8tBtg0/+cb3tdjI+NPg3wgjXnjYlqZJYqFB/ujj2rO6Fry5OPl9FQErgdiyg1lttLFP3FOITbD4pv7IRtrNqWi2g5eMLGqsNjV2iy7xcaq+VfME1/w2Nb/s8EuTfGL8TROoDQyuONLZZ83P9s49xO7yA9vXr+CNYNoLo8iEMY0/Jrw9St2aJAFXN9104Q3T8QcbbQXiNml1hiALZ12cvtH0T7rkx0oMMGy/t/7Gwpek0GN+TrVgcA6v6NeYDN6mOn1jIzpDsUaSDqrl4wgeE0yB71O530tJa5gqbSyj8mIKgIJJs5YfQgdaR6Q9nVWKTLkvU/baSOxQax3xr3wGkuuxuaS686sDOxXc/V7bfhVXriYSgKkSqbqlqWMcAAPgHARCRSE1zB1Skf+Hv937rHWRKKBGz+jjXPpf8HTZfwGEeX2uJH/bqWwfH2IGfPn883LSiTHhqeSj3y4ubp1/7wtTvC/eBbpUjy2GWj1mHOxjj1bWygvAzoNYp7TdMPJObJzzyuIns6SA/RX3IXf51/MaXRGP5SGNdx8NhucSkHQHDh0A1hifkiaUu9+f/R6CMf5v2bzvvWO69jB8Ubj+4PQxqBo6QT5Cq+1u0UzuELMI/kPF3FLO+VlhBCKXLXuEyq1vFEgrYJX34ah3s5pmjsOEcJbjaIiRWSv+vD8xOCGRf4tdJUf/4S/Lw3ZhdraMlAoNDbg5SFfbJPqmqT+fIJyUg1ckVYAyv/JTO7+6/4sPa6UHF3Sa4sTD9qibNtpw2a5Zl3nQWtg93h+mdkbZyDbSyr5DnhCO9kdr5T9HWaao69prHihHk/99vHhECyD+E8bJIszPP/xFZfpudohSeXJ6RAPnyEslTXBrblggVmLq7RqqQkM74FEEaqUaej4xt4/wJaFbludtPe0t99RPSd3ffrSft7wrNYKpx1WoWf9yfXW4fsuhmPNW8qgvpBMKBeJhN10jZ2uG+mYJqY4tpHhDdsdrMy8IpAv/qpJX3pUccV0RWICA7ELJQnaeHceWrgo09eK+98rV2zy+JDdjwhscV53+ApzaTCjFrOtOWCRmqcN+M1sncLB7MXzxmlc7vp8L49yKhqnFJhqtWQjAhVRL/kgEmEDMwOVPfdxM9eGtx5jOEmIjASI8TSHVoSFrCmRcOGsTNEX445DbLJB1p5/i82H+q/988CY9fl6eWGDtUsMwBSmPlTjNbXu4Xx57z8tmTSyXTlTXeoL8FxJ2UnSX+/jD2vptlNrIzDI0q2q0Gje2F9NzbC0kJ7tCIdVMWuUAUDpj4/WjW2KFfhOwpgoiIYwWmMY8NIQyx2My7UGgfGWmHLrsw4jGRpaHIriY83vT/smMiHFfN/k+erQIpGLUzhtTCQCMaIeWvjQXczvKQX2Ejy2wnmGNdr7S7VLX67zfKzmvQXwlTqil0943Yfxsf90IFx04K0G5tZG8ZiF2RfBWmZQyWxTnicEIjnU/+5zQG/MYZy/5VKFmRwYB6U8Nrv1F95d1cFCAFmIiYGxcXGjiaYmu4iKzc1diUokba6bNxbR34sSmkSmJVRMWGY8X9j6vKW4sHFGOK/wBFO0ltpkKt1btMvkfhRgBuvNxGYuyDPeV5RvausmMThyvM4G8qnAkADl+RNtuwLp/gxgdLTKDj4oiVDNSd7eF+EOOLqqbWWzyEtdmnIOQZnGrae6Hv4d+oQl1y2S4U3UtXn+Sn/ckxPRnPR5E6Ks1/reGJ503/VufI/T9GY302K1cCskO+VWfkB4+m/Z+nw1nhgny1p8Mye9Nj778VQcMSYHYNUQXLvluw66foryS1ADERptbLzp/J7hsVDLWIr6HZ6vavxZ8IEAE12sKaH1rMUytlMK9ifXFuAMMw7gtJlURERUNIAwwxk4JIlKyquIaL8prNSz/5or3lBzCF2jpsmBQIQpnQDPyNtrlbkhiLIPHwYOQnjiqpqNRKRGxgCv9fNsSGlFRs3PEa0nD1BYmvvUiRklNt1i0hvsSVmCJaPLGbe5pjVZc98RC9Y9WXtc0Jv6GJE1I9X3n5WlFbDd8wpFj+g2LcTLWRKonqWJ3vHofLMWm5881fOsd356r9WHiGfAhZ7EFckThciypbXOwzuXAeIF/NjT69koZzRVMeh3SzoHRU+pSeYrTVfNSg6VCNRafGCiRPNbQVXsKN5u3PcPCGC9S87s76ohrTcGQtEW10FFpBMX5yfiS1e/NEpHtv1OEBlZGqVRESIjJqJokklspEqu7Ba7MDni//tAObIVaJSIvijAtH13xV+5NgAqAcKlFxwT4NPOPL0HAKuL3CHDaX4eGl7+ZjTtfuFMT6c8HXS1CKTcRWc14biVNW+6GROYfyzzfbQCoKBhsaLtiHbpWdd8v8fhKL/qTZ8sjimDNgSlIhd8L6i0bq56PRFvV99Zh/oFHhZK2nlLoj/UVjQOt6GIy0SGNbXtN56Oo5CpfV7ndqa/zVGhxRFj1CHzz/2zT/IyjiWa6hwEDWoG90EuIWEI3zS4xnXqpKnNq2WZc+tuQ15ugiGuIfJNQDqf3k7k0UDKWsFehbIUD+dLHMMBgpaY39bUW7qzvWRwvpTir5Uxs11lOUHxBIWzcdSEztVjM1olOjLNdWL8n9S0mBrHVYBgxDs0Xr086x0bT7uv13EJdQUhUlKEBWzMQarDyeiAiGwmoIzzbvyOajGuSLw20eIWKQKhXl4/5n+asf1D//Cq/aRKQQ8Q+SqZGv+ZaOtodu/meUqkph6juutz/+j+Lpr6d6CGPiTEbzWU97BKK0HE4jVlwhpfN73R92YokNRoujKz89vPYbsvM+rQZka1VFwdyb4o1bexe+vjjzWWItI52UYy2CfEIcz4q8IdFYKO2yq9npcA+XAV8lhTuT2LDI9mHq8ECzm02LUCQEyeU67bFDGRYBuRaGjxTt/Nj9EvuRYNjSIe9C+CiKNSiyiJBDDDSbO2rYFEoKRspbmiVMNlN2n5PSS43nCEhUkT97pAuLhx9ao+v43lwf2k09AgwkDVAy9ISmkTCywhBZ2ZC14ZrDJiVQEy6E2OIeH5C7nrDPyIk4q9aQl7CacATabtnmmKMw3lUslwqqKohVRffdSuVEygLYwI6w4gR0V7nyMhzArUJNI5zEfa2qMvyZE0NMHHAUbMrJV35waXJl/bNLdXDIJTAAk2GwIZ9iEAB0J8gUZGtSArPvbiupxAJUaWpqeNUXzONexDNrxdZgDq+Q0hLNwrgrF+PFhcCkBDCy8g/NQautYQq796Glf3396NaraHIFul10puMLEbH27pvsB17ef8lfFs/+Y7K1PxeWxWCFczJgS8JhxFgOLhTnr2i+Z5IshoQRKSVEk2bwgTQ7QLNlD8rgMAGHlfKRvH2VDh3kY6HswF4O6BYP1RgKGse1G5n5Ir95kGWTFGQ7PpyTiPE9dEpjyFUCQfIY61uj+fGetR8abcGAS1Ck8U0ed5u9CjTSNdEWUAGtCJCfIRonaNlJpkrMvlvWQNQgf8LN2T98HQywi8x+l0p64qR53A/wyTyhQhsBRQ3IVpiWeuQa/FyDjR66V/ffSoYJCrCqEgzJiFY9iohIauIiNsWwDBAglC6IM53WDCAsZXV5JFF17/Xyq/+m+QPqsDfGkClRFAQmgu7fVv/qh7J/F/WnXX/Ff4mkcgZMVBqytZnd2H3RW4vTnkkiHnWq7YFPE/Q3BnyEpqw1zrHc2ScWRakP3Tr/sT+wO+9FfwpVpRACiIkBFVVRYgYIUk/86ZeLo0/3q6iJycmwSdpYB5pNTrOZUJYtt6BCSN0b1eaYcBx+2gQdaOs5oDVLjD+JrGGMrAUwBpnNsrrDgm1JAZJ2HjGeX/z/w5iNzWhjbB2HgWhclNrCyMWJm6LdPIpgU9FscJ3nQZp6fWFrQce6zxowXrEyRciCssYTtdYBZbmYjj/S/LPiRGYMf9zucWa1Cyj1rrAMOHhsPhcxzi7NcK9ALbiw9369vuI11F/h+jlKSjA0mjNP/ZQ58kKyNbFZZgIb6giANSZfKingNi8eRAWBSCypFMeciWPOxGGw3UQkex9a+uLb65t/oJ0+VaM0ikA2xLFCprT7ti1e8rru036/99w/oaKrUoNNrLHzgiq8wtTX8gtRm0DBuBrEoijr234y+Njr7XABk9OoR8SuaSgkYRkwCIpOTwbD+ppvFkefrtaqx9Klba9NbEaq9/wowa+BiCmEfxcuU0pLvQEfiFBEj2XKkw+3lDUbjiBrhY2hp1LPTElDneGBIPkmQTqSNL+tVqGYkGqua5mlNJSjv+FSngBVapyUWU8zPq90EnATJhK/MSHZQraty2RP6QjRMchTeIjIsKQhUiDNYbPnFjEqiLO8fEOjWblmQMeQADfgc2MBtjkl8T13yuAPyFoGjfGc38++kY7Yi0Vsl1MeaRSpwsoA++FVcisv2XMzACImtb7okBF6q3j1qWlujxwUEt64ClxMmbtXbEXTR8N0HGaMQqniaklXm7J/gWxYLNlaba22JluTrdVaFev+jYrl1Vv6r/onXn8sLcyp36gOHAwwmNltNbUWRYe6/cG3P3LovS+uH74dXEhdE0lzuoNGFzdHTyT4ZRNxZS2Ksr7hO4v/9EoZLaLbo3rocFZ+4ytlKwRUV1TVsuuBfMqU9k82d8jmkA1sfZavK7VoF60+JfLhfIiP2gRYpZYr0Ka46DLT2/yRpNEANdOEGLrRiLaxiNG05rK92QzOugyuTkNndBnsfZiwAaG76QEOrR92kU3SJCRN1hvbScfmjqrtRCWHJKFdmmtjgKXxFcNPlAECiWjzkAiDv9glag/itVXmaauvnPXjUsGI5lvU1ntOYbw5iFWwi+QBhZKa2K7Oa4ACUg8cKUKpKu29hUw/fJkQKVULWHkST6xDGBSE2bZmXB0LNrL7xuG3Xrz0jeeNvvkcuewi3f5DGIMsIQOlTclxPKJgBRPH/xpiJjCxATOBtRpSd7J44st0uEjMcRyVvWP1S8VaqmuamK7uvHbhPf9z9NNLUZQEQzkOg7KraIIdQbEpmCEuRLkohz/6/OIlr1UWlCVsFXIqeOxE3rN0T0cEvYkxrFSrHTsGnGhMi5tMJH/X2mybIeZPqcrQ2AJAi2ej4aWJG181W8IJUgUiFbVCIi4rzMhMGndiWgeN5eSPqbhGtFFZZLembTCIqjrkq6aSKAf2pPM/m6Dkg8wGGAdhuNYMrHHNogmRQY4WWY5El2aT2oSsAY141ZzntmFyWfWeWkSNVZJmbBmkLcuJMqxwjKOUgRhz9J4uE/CyWW7rCSilKZgmLGnezYmTSUpjLxhd2iNz91HRczNuKBEZEuG1ZxFYpaYWqM7Psyrlwm6/evRfL5cdP4csgdUevKP6wet093UAkx/fZyerm52kZkmOOGwhP1SUDZEWx55Jk7MEgjEO7oHQ7Ih4F1WQALU1kzNqlwaf+7Phv/8FDQ6BjUod11bzQeQLIiEQfGNBBcYML/+Xweffqt0+mUKlVs32RWytedCqZ/cyg1dtyMaxLktvDq5jg06RLQltsFE1HAvQtKryKXdrlcd2lzQBExmiPGC+GiipRrWtFmy48PgUYkOOTBi2XERcimobh6Zx9zQ6nGE95ScYWig1Due2h4rFHm/j9Mz7k2BqZtZxZJEHER3PbSKepJEK0TjQM8GBlFQycFWGIksTq4AmbpOjsr3nQWXh3ANy7PIy7LXWv0TraS8DZk/poY71KbQBKdP2UzpcF78Z8VPuEQis+2+lhR0OuQBiAgOMchIbHxPehKSDwhfhFqYjD3x39F8vU3sIvUkfDcppGey3N3xIVCi0B7NyC0WM1qrNPjMac2mP7xHl1Zt5xQaZ28VFQSJZcpdmwwniIpaYtegtXfFpe8fVvZf9vTnh8WqtQ5YqtYe0Y8wBuLMPbJYufdfw+/+KyVmoJSvabCICECzTyYMqplc30pusi93keOkYPDSyKVvj9ZzaS8uNS1tZ7m8iKGmT7JJNWAEu7Pbb7T03ytxe9CaKY041R58hrtGD2EHI2e5p5BHJ0Dni2a0eDi8IWcncGi2HbCM7wJH6MWgk9Gi3t/NfJMSxECFrEKQRRrsiaCY5vr0DFeIiLC5SIpXah6yYf2UULG0N03O6oIiyAXOEoUBrgtEGNTUxdAP6Ttv4/dB9oMMwMTMgYazONFaWmgB8cUiU92JTa2yMItEMH/4tCoF058+1nqOyBwYpK4HUor+aVpykRAQTx46qAjBpDS7s/d+tvv/7ICHuoR76SaitYXp2fruxIzIlxkQniiw6RgKORpRb6k+737I1JleZtUfIwW2EsgFzyKEysakkBBUSoZmV1e777Ede2XvuH3eeerGbDIELIlJN52VqZat6kAEYdjT4tz8fXn0ppleSrT3FSTM0mn/S3C6SrZCEwEFpJJr6X2gedhnwuj2DRIMF3/wqjFOdVWPPPxvcNSiVrRlPDkoDM2g0WLr074ZXf51Gi6RC9YhQlKdd2Hn5u7BiPVTAHOjvaM5rdEw9IT//0sOOHFTNueYRdULt/nQDsNpqeSbQV4uKGkIux/TIJ5I6Rt6lViWQMGDs+nZy8D4d7CMuMb2F+ytd28uNz5oXimW51P46TUFSy8EHaTSHcgLTW7Toub67EmcAJTSIu21dmEajKYs44wIOUXAA2aw2zxjQwD3mEBOPAIk1V4OEoTGrJIVLww7cAdMjNhS6OVqPsPoU9NeorQATajNVgtoKRcfe9eXqR2/RossASa0gUgEB3FUaYeYYLnoqFaFotK+gRWvMlr/OEAKa2FsAm46nX/9Eu2gAAJpcRiQuj9vfov1JJRp8+V3VbVf1XvzXvP5YqSt2bZQ4WaEMKiAWppDFg4NP/GF18+U8s5qqikiaYL5sv6VOfUBGq6LsYOWGCAfOZmxNdqYHDo0zvsN5njDLifawHHKGmuy+WH6nib1qk7jRHqeqEpG1ix//0+oX38DsKuIJWNFOn0RGP/sKLezr/8m/UdnLubR5tzZMrxI1o0nfbsev8e5oWF0eUdbSKGkJJWnzTyD1vRjXKRfr6piI41r+S3MgKQVsj4OssVEVe8sX7K+/JgfuoXqRmHlirdl4Np/2e7T6ESQWbDRvOiSmXKA7B/Q3GPaOr8uNn7IH7lESmI7przRbn4nTX0flFIkArOk3A4KrOWlEHlI0L/QwRp3RROoFtYgIWXm4XMYaAE2ZZlCboBza8K7pQDp7nICUuyqW1JIxVC9g7dngguzIs579irBUdOytn6mvept2JgCALDHgetlMNDoE1fLkl8ckNS1T+P2FJk8wcqCwTEUHEBFvOcnhMJW0pdcSeKqBeZD4PEpVTVVN3anRL783//fPra79OhclsSEVT9HJA7WLGgceHnz45dXNV9D0aqpG+dwTjV5BLFEDoc/zWpS6fUyt1nz2Sy2m+niq2colvDxEfkg2IYZNemVDRgDUAl+0afbNvj2IxIJ5+JMvj370Je3P6NKSDkdqa6iFAW88qrr/hurqr4BZ66oxe8hHPr7uapBmU09TG9PwjF3YyNgQucnIiY+UtaiaVaFvDrJvx4DB7s+stlYVSuQgQKlNhg5A/Dg69eDA4UF72e/V332T7LiG6gUwg0jnt9e3fL768ov05s+AjavdmiTAsOrcyxNVEWhd/+Tt1RV/Yvf9miAMggx1/iH7iw/Zb7+KFncRM5EgG3io6Hhg1UTDWpYW3YoEaA+ymx+py+qHZL3kMCxsd+sbUBsYVcGJL8PURl64n2UErTG/jac2mpNeoioO9+Vnv2qJS3vzR+qr/oI6fQCkdWoYmoLsCGaifMolvPl8h4HTpAvgv9G84+3vaOz7to6bOwByHA1jtFBd83Xy1IIUhls0TV0ONwIV9KZI6/qG72B+X7H1bJQ9tXXqQChBLIrS7rx78V9eabf/GpOzqEfLCoS1SuvAF1a/h63l3lTnqa9Gbwrahk8ur1Yy3gmn1hKnJtWigf0FK7Va+Q0+cpOvn4+VYiYDAnjpGx/Q/du40/ETzshwF6tisThfPu4FjtxMjdw1sVj9nudluZX5ULhJjKZx8SRkDY5QciuaYkZhSTKTSv3zr42+9/HRlZ+rr/6yvfeXmF2HVRtdtwuOrdmewuctgcStVbUEtlf+ufz66zq9gbiIC58I1J0kht7zPerO8IZHO6wQ2hi6wAhWS6a0137AXvthTK4GABVPDGbWzhTtuQV7bsXWZyuxRpm9BlkjSgegWagg7wstK1LVxNNlcgrNWc/YdElbZ1KTCIGxkbBQdyVtfCINdlG1gO4Ks+UJxXkfpNmtDqPhhz1qyRT22vfY6/+ReqtAxEF8iAhkSlQHeXJj8fTPY9P5kDomEgmIrCBQ0UBzNzq6zbF7Yn0R1hyFyRW6eMj1b9tjJn+uCQIKv0kPAcQqM3X7S1d+srr16t5L38knPE6rEdgQg6SmolPfc93ix/9A5vagN0n1iBJ2GxlZraV8RGlg4PJqEZ5cgckV5CH6ebxobBG/kDJhyEYzIGENE1wnq1BojF5Oba41kDD1Y8DBnB4MGFWR+b3UmyBmOLWjwGMkCNVid94v8/swuzYV20kyKwDAx04zDch3SnimMcTxskKHyAidfvod6YphaqsCQOb3z3/kYnvTDzAxQWDUFW66svrJl7qv+D+dxzyPxBJMkniNgVsVLtFotBoFprTbrpZ7vkczR5AsNdosgGNRUnemvuofMHUkjn2q1JWDRcZxbsp3TUFz2+yN/6bdWdSDBrrVKumQJtbah67CvZfj+OeS1IQiq8KgGfGI0aKeZZ+FcUqRW7TNQw46ptvQoPlG0mKzMNFlNfGy0seQWKw8kZ7yGV3aDzB1Zx2FzpVyCrjGYv3Lj9Q3fIQnV0PqdG1KxEYHe7Fqq3nqZzB7gtpK2aARKyMwThmN/Kct4ZmNr8O/F4vZ9VixkarKR6Nm8UYZA8KDdjT7x3H2rFA1ot5Mve22xfe9ZPS9S7jssDGwlotO9cvLFz70cpnbg7KLauRGiBHLmUtytIVcBI3jVC2mV6HsJXXcRL7UnBfYbOJopMY3+igY12/QcXgIkpJVY08iQzBGNYpseMmux6cA2VqXFnQ00qoWKyqkopHCxaZQr8+IODfPRv1jqMsGsiBHn41pUSjRWHOxrX8Z6eHIkhAVK2pVFz/zVvvLy7F6LXoT3O1hahqr1inT4if/rL7regWL1GksHsEXGWgnwMq8fpzc+U2VSnVEaonEC/Cqb6mTtSSWGPXlb9bdN6MoSetMACMyxwUE+8CPtDoE04mvk/1XhSKr7Mv9P4jz1VSReUms1hQ+bvUInwXlGg0ZHas5N9PDqKw0yHHaUJtB4CGOqyW0cCJMYkks91ZSd5akFlun5adCMHZhu/3Vx7g3QTIirdURNFTJGAz3mE3nFhd9g2dPcCEmw4+koOY2Pau2CJfL31fWGlRmg/VbqR5RJv7ShCX75eeILDkwAr4PoqQgazExI73Jwdf+cfGTf6iHdqIoRz/+j8V/uVjFouiSrZwOBdwhp9pQR0FD74ViwhU7C9bq9FqiMYXjRAwFZZIyOtZFz+aF2k71x3ABgcsQti6oLeaOMVZ4OKZyoQK1NS0tUj0isVB1M2+w00khGIbxmhlO/oaoJZqgy6EvtVls6zJSz036RWjsNLLoqAPUePwibIy967rhtd+mVRuprqm2aq3WVpaWlFgG86PvfQJRDC5VAePUzPDVbLQeyM4biRRau0ZrNlhWfxrZWgky3Fd967U6vwNcepag1/bI0ue9vyapczSKX5sqKqK2JlXddztG8wpOMwFtqdgw2suggf7SXC0rU7/SdhmIZerB2HnKVNHHT8gcxqkNQRAN1SlUxAlKgE1AWYlzI6CFbbCLxB0KcuQKIja0tI+Pe07x9H/n/hoVC5gM3NrQXldx49jGzSTSfAtq7E/GsLmKI06yywy+lHLBi1QaEzWmhlnMthUxo9sf/fxS3XabOfGc6sp/c68f9cjzlDJFULfCG3hPjQyInD/qW628YsNh6K3t7nhDyB4tFZsxlbcWzU0DEobGJvINwBR8shsJfJqkp2Mfj0hhDAoDYyC2wVlzRBVbqwpHbSTPqB/T0kRaT9qWx2rL5iWKEDQ1LMeobunIDP1fDceuve+XKAyYUdVJHURV1WJiqt55lw4XqdNPMHxtd8Eaw3glrQdkRzDdCFdK+pqZbgek1s6UHLjbfuf1xfP/nUwXCZqaoYPsIrKUUDPCZdDuVxotqB1SOblsAZ5kYEVbpLXliHwtvxD9Df2LZmNGx1qNjdmYatY4QABIJjnItKDjao5/ABFMD1oTmGB8lsJGF3eYk15mzn0fEbtBWMhidQzsp3GE4hWxkjiRNspuZBcZcxKz8XiUnZZMpYNeiI6JkcDzqMmDVylPP0CKesT9FfXOe4eXf1q7E1QUmQVFlGTVDMmtyJlbSYIdlEaSpGJpxbqxxudyXeyUEEmY+DY782lA2DzjG83UhtxuQjr63astYXPflZBwd7Hzagrq9GAKxPwYUCKRAEUWJc2E9rR91JGo/+kEzc6SEG2eYRG3LlbVqrXe/kLEfQiaWO6IttJmk08O7oE7khlsAMNkAAOAyFp7cI8ODhGR+PFKirxYRrHS/dm1fi1IM101zQdBob6yPLlGdvzC/uRviY1KnSqKqHGotjEXyCdKaMm/t7CIOctJMwBrgLGqhJmROLh+LszbEIZqtz98GdREjDaa61huWIsxtkSoo0N/PRdPi31nZrE1Zo6lVSfQYBuxY4GILu01p73enPfBhNaLr6CRIKt7v245cIimIZngRgcq7wWGvc5KxOu3Un9WpR6ThUNanGmzIr5jTqeVj1a+eBELU2ByhkiIBA2AENK4DzmPgBJKTfMZlQNNCIGxYn07L2y0DV2FLUEB0RFzAklHBKIcv849UFc+kCsWHIVEwykdt0DQXAQoAlUyYDlChq8AGUPMTrcnqJW6lpaoE1XyIHmPbwCRq8qDh5B/fm5SoCLEDGNgCjCrqlrbkM1UBQk11D1VxRIzmQKm4KKEKYgdzt34D1FLLWKXUpSEczwaGi3CjmJMyVD/DGPgFNxUSETFqliJrd0Q97MnpB4NaSuodWp0jrLlm2YNIRMQEdkR+ivsr78ov/wUTAmtKKp4JMiAQVLCyYXB2+K2ifuSw7o1SQ4BALvVUhAbZUPMYAM2fhpN8GuD0FQZ0xwRBRB55yT3Y5bEBThuqhtnmyuKWqqFi4lJz8R39oPUrkVUkxWBCJFqMVE88V+x6QKM5jDcD63KR7/FnPVOcq9YcRhciT8yvc5XRI62qTdYVow3eaNg5UbMrtWdd1Onl0EVo1pTPHxBDbUYbbzufBjpCesZKE9VvKS9RlXxXIk+dJ/9X2lLU1YFpjQrNjaTzojD48ANZ2LjjjZdOCCLB9VW6PR5ajV1euL1ekXh/WJgCvjWHMCF+g2fxPn8xIuNEulgTpcW0J/i3hQFyzsXqcBMholE9u/QusKqTWQKqmsyhsTqaIls7WmBacIaojuHzcbsJxCiamsuSiaSXffVO+/T0cCs3myOOoWKwk27A9QWSe5GhEgdKFMXD8r2O+zDd+neh3VpjoqCZ9byuqPMphN43TEKVhESC2OgIA7FrFjLBmUXDlNUj8jWZIUoDb0UQmIJRJ0eOznYBgsYWfrSSuM1VWOpCdcaoEeFHhU7RKdf//wfsOIIPvppWo+IC6XYlyhT8hrkapCbGLURWh6VmKfIpJa4dFN3nXtQd90su2/Rgw/oYD+ppc4kT6zFqq287lSsPRVF1710D4fLGs1Z3SdwS0WVtAJ3shlLi+jgUPAmtalQCBGsdXr0ST3eVVMUDiS1gIEpiMgHmtlj9JmX6o6reXiAVp/C00eSikaJPI+fkSZhTSipiDIRFU2KuGZGeVmGFuGt7ndFuOya9cfJ9tsJrFpnrDnPklK0FOIpE25rarYm60FqakClo8V/WgZedKCU1CfQMbK+KHX7mF5Dh7OQFIExRFT/+qf1DZfb+26Uub0ynNfREGCeXGWOPLk4+1nlGReSKcnWTuOk/tlXq2u+Xe972JRFsem44nEvMCed58e9zltShdjIw3cOv/uJ6s7rZLjAvYli09bOk17GjzhfqxGpcqerh3aNrvhsdfOP7L7tVI/KjceWF72uOOMZZGu1FY2G3prF9084JdWOdJTqDUDVIV/ktquGl32keuB2u3QQUnNRms0n9Z7/x+bUp5Ct2dn0+bmeqK1hSiKyd183vOrL9S0/lH3btRpGohsZAy7QmSw2n1Q+9jnFY1+I3pSTkAq+ZwI2uri/+s7H9J6b7Y47uT/pSBONctiVlwuHFv75Yu5OkinMxFRxxlOLMy7SBtVNvXp+fJuhi8qx75hpnkWFsCgA4pI4AtXf+6PiuZ/TDY9GNSLjiRHgpGiaGsFJlkSbFb0qmoKAIFUhU9JoTu76pr3ne7Ln17q0j6Qise7VkyNMgVBOYfY4c8xTzEkvxPQR4czgQGZTBgBWR2bfc6v86j/srpuoXuKZLcXWZ9CJLyQqSGxYtRxU11kf+kl953fs/ntJ6mJmAx7xP2TLE2FrBgeAMiBCbGh4oL7h07TtZzLcj96s2XAaTn4JrzzeOwEQeOO5fhd6sIYmrHfgtYbtb+Abxm4PWyKGS6ijCFCuj9S23vIZnEIEpli67P3Dr72XplbAa5q3+wYNPxCVhHc9jNdNVLHVlpJVmppHbE7IezX2VnLZCwBEIphaNfnWb2J2PbmjXnMNXwCob/vJ0tf/Se68VutKyyJUDSArZGuthyg6xdYzu8//4/Lk88lWC5976+iKf1cCFYUXGzBl58LXdF7wZ35lWMtlp7rhisEn/1RHc1SURER1RYtzVEnvt97aee4bFUZuv3rxkjfZXfdrp49OlwsGWZD2fuddnfNeKosH59/xTNm7jXv9lqsVlNTWPL1q8u3fxMqNDj2htUVRjK76yuLH/0TsEP1puBihQoMFkE788afK05+uUhMXHgsj1kW3wZffU9/8Y7UjLjs+wW7KwZNYGi2BxBx7Ru8Ff1o88okk1uuLEtl9Dy9+6FVyz/XKBcoOFSXQNOegjCQ7HPhFZmtS233S7/Vf/rfqMWoZLCSKgw73VZe+APMPgcvQWUDoAjZ61blMKYFptEgTm4sXfxX9dQQlFeLCXvlmueX/Un+lSo0mr8CvC1thcnPxoq9Sb1WL3hPsTcne8TX7s/fJ/juo6FExATZNCkKkLajWQ6qH6K0qTnohn/UG7a2kesSmSJJvKmBT3/qf9Y/eqcP9rkBmJ6By5FPNk/+RerNh6O7dUOof/o3e+Gnxxa9FvQgU5vF/xY95vcPdu1QYzLL/7vqy18mum8mwAkwKqrWcNee9xZz6Sq0rsHGiDo7SlvOw1AUsGA/SdStv7j7dcyMNdmPN6Vh/NlSLTACx0Txty8ONIbPNphPYYNlOY+4FSCqwQmVHbI0c3p9UAkmpwTiJw6YoaB40N+FFIG0FgntSLSHNEJhY1ZrJFZhc6VPRROQSYtZ6tPSf7xle+RmyNXWnqNdnRwxyaTEXVBTcn1CgvueG6v/81sRL32kH88PLP8trN7OtnbSBMggYfOODWHds57wXaT1CUdS7H5y/5E0YLWBqCq5eNaVOr6K6XvrSu4tHPIZm1s//08VSj3jtJtQVoGCQ6RLJ4NL3mGPOxrojAXIsHiVBpgakRGSFRkOytSqRqEjNZWd09dcWPvMWzMwYUh2NyNZeGGZmhdbDpa+8vzj+sdSf8oM5K1yU9c++NviPd9Rz+9CfQjHhodYuh5csfWemiSllU2+7bf6jr+k9+w97z3wDiYhawAz+/S+rO67hNRsh1jVTVV0TLCn+R6gKT0z5AagqmWLpvz9rjjq58+T/FfhXMSlMinV+mELs6JJBibOpR+6PGglRoEZnkha32R+8pbjo4wg0SJKR69SAmtZokdzne5zU9ANVtTUVHRoerH/8TvvrLxMzTawhEaiS1DE+ZtZAri1ltDOp1Vx9zYf4nu+bp74Xm86GVMQFCGprMkV1z/ery/8UvWlMrIbr3TKrKeXu/yKU5hn/5MerUqsp65s+X197CaZWE8QbwXWnFGyv+xA2PoqPOD9o/6oOD9bfeq3svZ2m10IqeMtEompgr/gzrDjWHPkkVUGQOw9YLfFsY8NeeX3+Qdl3q+z8hd1xre6/Q6uDDGXu8KNeYx79F8X/yyw011ULxaZjrKw/Ft0JcrYmuVhchr3VujbTK9CftDvuxcQs1RXlcl+h25ckFONQTkmTjQooks250KV5rFjLzHJov3KRmrYtNZSqov4KFB0VCcRZqBO8W5obXPKHo+u/i5mVcO1Dm/PuIyzMQkGdPpEZ/Ptfa9nB1AqMBi55FiK1QgD1JpYu/1Rx1kUoOgBX131bF/bw1CpaWlLmpDHTKbU/MfjeJ3SwqIuHMDmjoyXE5lw90sLIgZ2jq7/ae9GfozRamAB5CRoqrkvhe28kIlotoTe59MMvDj7xZp6ahloSJ1kQkHJ1pZ2e7L5f7rvJPPJ8FUsiKMrRdy5Z+vzbZXKWp2apHql1bUyPhgpMViU/MbAEi7JHhpf+8z26Z3vvd94lYNl1b33HT83qjeqao/nMNwlxZnmmtZnphFJvcvCT/yyf8FLymtgNsHzewkbDuysj0YyPM5UYUFuhO6X3XSE/+ht+4rtURmRKFD2YjoIzhxnKmUtK3masKUNjUXR0/931f/2B7rmV+iuYLIloNitJqoFeKyAIj4kSSp3eKAvb9dsXFxf8nR73DIhVsAIqdX3N+6BD0CS8TgKpramutJyQO75hzni1bny00xNQqeXmz6E7SVCSgGcRi9IorPz6UhzxBHIKNUXH3nmZbPs5ZjZTvZRRGlXLCSWRX33RHPkkUiEUQZQPiK2uwU7ZfYPu+JnuuQEH79Olg963yHS5M0PGKKj+1Sdo8phl+OENBZ+kx6VN4xnCmqMws47qCsg048OY1FXiRESDQfelf2dOuYAWD1HZbc6+c5HPJCUWvRtzvCmB0OmgHvLKI3qv/DCVE74AidIGTRND2ApTqyM5FV69X7QeLV3yhvqX38PKNaRWRdwEMSBFYm8/tHldR7A3AQ/t9H4zCEKMXHZl++32wVu1KJVIHriZJ6dRuGDl+hFO/q1Gb8L+6idy53XoTWA0hDh9AFHna1UrmdI+fAeIUPb8mF0lRg0vU1SW2p/SssNSm95k/cP/O/jYG9HpkqiORmq97Ap73iBRVcvinN27zcURLsrqmq8NLv17nV3DxlA1curs3utTmzBo12JgwIBsraMR9aYH3/rI4MvvKdjQzrshlsrSP0BmMsaBx3NpuibGPLBHRFREdj2g+3cQMzQX/xHJqVw5+LVhXJgmogGcCBjXNmaylRZ9e/1H5fp/RtmHCpkucSeCNuJcP0F9XQmQIAkKFTalHryv/vrLdO8t1J9hGbnWQxwoxa93neZkH+gnl4Ba7vSVbP3dN+otXxA2Uo/AhuYfxvx27q+MFYL6CboCRsnqjmtARLYiQPffTYfuo7LjNReY/VytrsiqPHQVLexQGA+v2P5z6k5SSO4kQI5BhLJPe2/RwV6C4xMzMwNKzHLv16vv/e7om8+vr/h9uekS3XmdVPNadLQziXKCmUE17IhsTWD59af58GBR98IjXghZYQm1Ft1JXn8s1XVGtcrPRmIoOl27eEjn5ycu/iSf+mTdv8Pp92SCH6k1lhx7c4iuqIioFSHowgGzauPUmz9frD9e5g9Qt480yVOlXN2MCIADcUhgeojAFMOvvnd43XdpdhXqUQ4G1ogZyRl6AW5MrDDgpLSuFPVywSDV+f0uCMih/Q6h6I9vdm0TOOMQMoaKIhCCg+82FFCAuOy49gxFRKM4UEamCMiEoiCxXHZGP//G4NNvwdQsyg45CVg3WQ4ZNwPMhgmYWV0rSdGpH7hx8O9vo+kVKEyDWhZzG4USq7JTwmXjteNIhKxALVZuGF72L/W9N6M/7crkrJOdBpvacITJux0a+/EAkzEJ0dWgPaCF2EW2XVsw+YQFSdNEANCp9dUvPiz3fh9gHQ3IjtxiAEmmnOfiMYOYMuad77yPDtXffr3MP6y9WbKVRmKspol26J4BDThNAjqTrSA1AdXlf6J3/Re5IVS1ABQoetGADtH/jJk6E3b7dVAVsUSk267SagFBUCc8aPWWifvul+03WK/vuSB7bqPeLKXDOERrEIh1NE/VQlIDkxpgufNLo8svtg/9QAe7uJxEfyXKSXIKxmKh4gOBCtmKpJLhQR4Ty23K5yKXmc3hrwIi3nQiecEFbmg0ciycoCr2jp9SUfZf87HO+S/lhX3odMmY6IqoOk5uD8AmBOcxY+jQvmJ2c/cPPsvrjrF7HxCp1RSaufwhHXI+Z+bVm7KuvZAx9e0/HV3+CcysoqrSYD2VrbUYLBXNm+ZMq9YZQKqQioj1KCkqO8YBw8VSbVOCwAELo1EaSx1NlLhhQkoA1TVm1xGxDBbV1v6TAwbMKZBClKTmmTXDn3198V/fRP0JKkqCErvOd8RQu6vqwo6Kk84pTj6XrSWtB5/7Kz24D7amuvYzXQM2QGwZj5Zo/gAtHQLUjV2iYaCHDJYl+r3BNz6AmbUouhgtqQOY+3Z9tAjj3IMxsJocWUncV5p1R/DsOkpOnZlAUx5BEDUIW+ayiP6CcFDrZEsMP0kxZX3Fn8n+u6nskx2R1uSFo7w+R0Q6uYgbrx6qysb++J206wb0Z1hqeHO+JvXBrxn2PuycJNnDf0TF5a0FOpP2h2/H/HYl0s4MsSE7CpQXzuS0LVDojutk7iEUPSKy268hFCEPUnKX6qNMCUC3XW2IwMbuuEEPPAAuASeA5KQ0nI0rqVia2ID+GjeXVbVCRkaH5JcfQmeCO1NgdlgSkITyIZPFdJoJw0Nmw+M4MbJjjkFjfla5CFKG5eVNJ2QAs+Rxn8R7RcCGdt/nGJD9V3yw8+w/oqU5mJKYncxJpnaUgZozl1nudGi40D32lP6fXUrrt4qK7H9IFw+51E4zEiuaEhsu4/B1uyrZevDV95HWcMa3mtlnAcQQj0hzQs0FwbSGw/5RcaykSEXVOqZDsGBOFTswpiOKhsFopkMAAxiylTn9aRolTj08zoVlv7p1tESg0Q//bfCZt3C3DxBsTRLwKS7J8YUt6/whMznbf/m7qNM3hbE3XlHf9UuaWKFVnSdNYBAYYnV+n1m5tnP6U4pTn4z+FEYDMqUj2zIzG2YDFuHelP31j+XgLnPK+bR/B3GhyiTebDJxfxLhkIgB40AcoSIYLnaf9NtkipRptGwUQcnIFjlBsKGK3mxxIeGqCGRriOhgb/XdN8qhB6noJotaamqJZwBDv3VNIff9d33rf+rESrKj3PUG49qgAeYQB70hE86ck0Wo09fBLvuz9xMRT67HukfqaC4REwJSmEQJrPN7ZMf1YNbF3bTzFi66RHWS4tWEwaPurOy6GdUigex9P6DRQsjokoktRFWFhnPYdBaVEz4jVgJD5+7TwXYUXdLa2yqTK7zcSWIIRgGiGnZAS/uKDaebs/6kaFnpRPW8JuNrrJRhJiJsOgGdCY2y82gI4HncSNGRXffr0hx602rrzgv+QnsT1Vf+QfvTZAyLJGXt6NaVWO2gspDFQ+aoM7pv+CSm1/JowJ0+7XmIqpGDRSfjqUCfdeq9KLq8cmNYXMKmqG75odzxC56YVrGpKZvV81AQM1VDHQ1UBFxwb0JN4SCA0RAjMTvjmcdJ4tr5QiG3StKEuM+NH0kVzASQtVqPZP/OztNf1T3liTKcJ1N6VG1GcvdLsijlwJ7B599NRQliLzUTdEPdOQslNYYWD/DEqs5rP0abH0HViIpydNWXMTGJoqRqROLDGJicSBeXvfJFf1E+/n/wxAoikj0PjL707vray7Q/TVCXQHioUl3RwgH78290X/KO+tc/x/a7aXIG3T6BWUVJSRDwEogmRzRcIFEIaV1RNew+5dWdc1/iQauBBdLw0wza0xG1pwG30fCLypCY2vC+8Nk8yknddyftv4vKCahQs97RXNozi7lih/aaD6HoxCpIk8dm0vNv2jRpxuiIy5KjspLWI5STesdX9KTnYcv5fPST9d7vK5jEaj4hcAkUs957JZ3wPNlxLRYeQjFBUmmOJogmOUVXD9yrhx7A6pPo4Z/ClCQVheI9ifApCMxHPjFNmZmJiHtrpJwhsUoWPgIywKpE6voaS0RKE2t4/Zm0/nHmxN/V/vpiXKBRpWGZ6fewt9fKPPyIeM2RmF6j83vJFC7oZjaW3tEebOr922XfNrP5ZCXSuuo8803or1j6z79h7qkpSSrEz8/pXAB1ujSYK49/TPf3/5WnV6u1MIUSyd5tcO5wmu9HRE85VaFOj2fWehS9WiIz+unXqB6RTkTFxqZqAJSZFg+a9UfxMWdgcoXu3yH3Xq9zB6g7qVXlzQzCuFkZiTcdAJEeC9hM7hNLzQEug8Qq2OhooNWQ2PDM6vKZr+s9900uZ1Go0wjIKfvRBlGtdbgmtTbF6+SwKyg6NFwwqzb03/QZPfq0emlQdPt2+232rmvQ7cLWZBI7Sq2SCA0XO6/+cOfxL0yV6poji4s/Krvuk/t/RVMz0WVBlSA1mY7c+N/mRX858Y5v19+5RPfcXz98hxzYAzCJRNNurzRs66Ioi0eeq6YnSuhOlWdeWJ79bM0kABAHJg1rcMlUiNsSSRoF37JmKRqchtCEN6VP8oHM0QG5LrDjE5AKkYALe9f3dc+N1J3x1USW10RmXJjPRENQUK7ZgAbM1YcWJq1tfcNnyi3n8+ZzbXeaZOQa6Zq0FlRVwF196BrYIe34BdVDKvpB/KSBBxcHwxse0L13Unda996OokNiNetQuoiBqsKq43nzY0iDOyQxSU2Tm3jL+Xrbv+n0ZlJDtqJ6Se0SwVB/LdaehjWn6Zozee3p7MBsRFApcu03zVzKoia1BkHOFO3cMxLBxCytOkIP7ETRSZwjbVBOYQwNB7rzPtp8skNhwFbdJ/0vXrlh9Nk/kWqoXKjUXt+B4UhDIFVT0L5d5Qnn9F77CUyudNMNZ8KgB3eTA3EgpyZ5fWAFqVp0p6k/E5JeYxcO2NuvRa/vfUyiX2kU4AYwGpTP/IPuRa/lyZXuFuye+4f/+Xf1Nd+mzgSJ5PYj0IaCf6bD5cpJ33NBzjWW6JcCtaIL+4pjHlWe9Wxz3KP5qEfy1Cr/eLnw0l0B3ysu3RSSIGCBlPlo8kpwR6IxNDhUrDli4s2f5Y3HS125KVp1y4/k4B6eXUMqrsOi6thYoIV53niMecTj7aHdYEMEFaujRe7P8NkX6X03AaxSexcu19bsTNbzh2TnveXRp5Qv/WsimvvQK3XbvTox7S03MuMQEGlvpnfxx7Q/7SAI7JtzaPDMkGzofJbm06nUaU047KTjwBpttpPHUtKsUjjuYqh8oZLhkgOly0/KIjlE7vwqeU09r/8cAKzxPzkIJCoVt6xc0v86ghCsojMp236qO2/C+lN03an04FXanSGxaDBhlYoSg12y41ra/StwoSoxscms2OBFXqXSHdfKcC8WD9DkGtVG8eb3Zb3ER12AznSEAvqnJRZn/TWNFrD9ShLVcpJXnIA1p/OGc2jtozG1Jb1KEVJLYAWKJIUgWd2HBqpePZo1VxMklRpFyZu21nf/1PvDZazgfLohUtkHbinOfKYLdWAmW5WnPR0XTy599JW6NEf9aRJxUoTOqVcAHNjVOeExndd9QidWSF2xKeAmVdWSHNhBRYmoycuRXx7podZMr8bkrD+JjNGH79KDO7jThUrMTdIUmQ0tHOg/94/K5/+5esFrJYJZc1T/4o8uLrysvuVH1JtyNKGYDHMuVqH5OIaaFgtArjcHVhE21H3ZX5dPejl3J0JZ7cjOpJ4c1VDSI4VAEw5PE5VfA/kGYDKlLs4VazZN/MnnsGEr2ZqLgqpKiey9NwLw+GjKzkgQ9Sd0Yf/cO5/jYOYkQrZmrZVYGZhZBd9a88M9AlB0VMUuHDCqUg1RdlTUm3ip9dL1mb+iEqQaojvBUeqDTVpmuQtzmtaHQXzGJ0h2txGyWQ9hSgVcwz7LKRqSEBnwOZqqBqlKKBTBKk6JCzn4gGy/DqYktUijEocfDPwVBHqj38jISZfjEjfhAoQENNhv77ysXH8qH/dMeehnxOxRGHl7BCpMdO0/0757qOi2VaMy0ICKVdOx9/2AHvw5lZOe9EHIvcGIgKLgoy/QhrA2gY2qUG8NnvJps/t6Wtius1t59jhwGTNoVUveQxsUIkaR6Gec84yzB4AmHzHMZX3P68hH+B5ntMTRiOYI7wZsH7iZiBw3RJWIC6qHfOJ53Td9Yfix1+jcPpqYVVtDVZmJwfMHitOe3nvtR2ViJdWVE9RTITJGF/bLgR1waO6gZxPqXw1nisXMGpiOOoQfkey5H9Ui9XoqEl1RE8+6qsyRpxTPfpPD24rPCiDVEGW3++K31f9wA8EANuNVZP7E7uEGlkcm48GZj3EIblLTyPbfcEl5xtNUROrK9ScVxkVfN+z160eToRMCux/BIVijLoJTPzMMOzKbT+r/wb9g/bFqK2LjOilQoYO70O35FnuG3/ZW4Vpj8YAjhbuemTjXbl8JZ7mNezQMGdVULSkgSgzmohBHYJOID/eTRgSbUfKubm3MeK6s59U4BBrGDIo01Uqqfa4LWy3xptNo350YDdQU3rsClGhxGtnSybU2uNcgLRt/X8YjdHddT4Pd1J2BQ1gGfIUnEKGA1C57TtrfUWbFU19cuW+c/4vLfGIXhrjQHdcTKW85X3orSZaSbmu8aLHEpWy/FmwCxh+6rICsKnNX5rZDVcsuibhhkUZoLQA7xIrjsPEsP4XNgDOAN5rF2jNp7Zk+nHrRI2eQaLK2o4/KrEHmF7Fnomh1uGPporHEi5t2w/EwXUjQVkFTM997FHTt7vt1ac5pmrvhqHJB9ag89tH9N1/Kx51JC/t0YZ/O79NDu2lub+esZ/f+4BM0sRJiuSjDZERAJAd26PyBIEOiiPoYSR2DyVqaWhX4rwQimdsbvbsSHDUIc9NowCc9HkWXVL2cv/sxU4i1ZvOJvGGrDgeEQp3Kn+G0wq1IbSl0edP79EE/CBhoYPsuHuw/7w3lGU/T0ZBAMIWjPAQ0ADMbh2TKFMi0IXcc5MQzL3GoqlYjIp14wz/z+mO1rpRNOijqEY1GxGW4f0FMN3wrD+Skg4oCRUHGkHHTJZCKiHfqYwDMAKu1NFxC0YFDEQVt+uzWERjOGrQAkjJ+7lMeZF6AtlJhlIiGNkWZfS+dSJcO8pYn8Llv0+FeUtYs9URDHSX0p9XLk0TnPmSer1HtU/fc6pnT8W1yQdUCQwhC9TzBEOUTZsrYNJnmQD1vOj2gpnrgRrVw7mrdaSzt0qV9NHMUrdmqo3niwqm8uVAdXVrAhTr0DmXyafkXiq+bGYZM4XeCKIm3LASImLUaYMvj0ZkisW5Snqz2/ANjkppsReLI+KxkvJJxIjGniFDEhHo5+f5MSopy4pLrezARmTVbMDFNS4teESI39QgLBaagQztl74Nm8yNCtgJVQtFRsWb9sRN/9H+rG/5L775WFw9hYoU56fHFqU/TIEZEwY7Ej3v2P0x1RZ2u98LM7HPTGFQUs+vTnRHRaCnotWhb/0pJRzVPrdScbR2CCqwlU/LkSltX2tVcoyeTIWwVJznbWzODGqLREtYcVTz5f5FYKsvDyU96H5bM3yrieDSYEodpjar3K2Yn0rf0jX/uvfK9HnPmGZlQsVqNMhGxNDdPFqQak9wouiHp8SIzVuaCBvNmci1vOdlay7lpqkYFPY3GcS7nayk6J+Sdpqw3E7dq4ns082fSmI4pqdLifnP2H8meW+mmz1J3tdqlhmhfPrXNiZxxVctyro9zO8Bdb94rogweLfBxF5mz38QEue6jcue3UPTdsZzxuVyXxA3VDEjM2W/mk14oCzvslX+hruJwwiIodDini7vQW40jnqgP/IiYYUWhDQOFYBkYmvCZS14uCOAL9vhUkZhdoW8MU/LWp7dohI3aGlDlbEid+yEg89bySUyRi/01tBDCeCzTdgdSuuFxtphajRUbdNvtVPZUrYNK5YRkKBGzLBySh+80mx8RKAHBkAasYok7nbOeS2c9N+FFRUA26gLkFALZ97AaZmNcLZ2w4dHImBQgXr2lGf7Ej7D8goNvz/kBKlM9hOtRNyMLnBKHVIBXQ/HfxkH8AFA2IQOi7JjKe/2uQVpgNG9OPhdTq7SuyJROhtgbgjOrSEukUpsvLUznQ2HuokZ0EAPQnx7+8P9qf3ryd96pccgXdXHqSt2hlPxvlBypTcj39pmT57vVjO2W9FlpuMRLc92XvQsr1mlducGuMpFhMo7o6+UcQq3t4pqiaSjQtI+kproCct+hsZgTGsdll3qTpFo8/h12cTfd833qzFA9oOjZi9ycLwm6hBNEm18XDvrRHBWdhEIbLVHZM+f+FSY3gQhPeo9su0YX9xCXGVJeKUl3gIaHzBGP4bP+kIh4aos+/q32stdEDQoli6qiahFE5sgL9BcfJWs1qdyGAT6ShGdTsiRvH+VCW5o4FvHJAmSXeOUx2HCWUsNSI3MO09w7RHP730CtaAqvewZHTiqIoy6l1PMhjMmVKUDWotM3m453iPpIRmt4/ARtdNl2B2WCVdmxzESito7/Jc+jdSxjtLS2Zc8D4zpj3o40isUxY2ZdPPOViLp99QMoT4jQKIIMRae0D93mMslM+1C9usTCAd19HzpdEuuU+4JHk/pbKRiGG7PTDJwW8nYvLcwbjkH2gOJQJ5ezCv3EnGYcyvDMvSA+TM0kG3nV2uqKTw8ufRec2ZX7lqIkU3h9aUdQ8NwdBLCk0GgB9RDVEMMBBgs8HJAdUr2kwwUazmG4QPVQR4s0OET92fIV7y0ueDnEsimZOXmQaNIFRMYZ1dGI6poa+luZQHPTzY3SXD5ffhosL+PIgNl0qOy6Xop54t/T6hNRHYrqAUQNs8HU5szGIMiSS4+BJqJ6AE/rdcWFQXcVuCsiUi9R0aP1j1Y7oqIHNpE84kcqLjdemsO6RyupHS2QWupOkSnJ/bCTV/GjX8Lqk2jTmVoPgtlILm3NGJfSCnVf0OwJ1ZKvkQIEj72KGMBUD/WIJ1E5Qc5wN3qWsWYRVBuae75pGV0R1CNBwuIrkoVpXOYNqa3cpDBKDOUaX8SbTnICKlGiNptzqXNaRacjO++mjPyejQeUAhblMNZBCVKiRHb3fSRWa5tdVuqXQaCsVHQwszo/1njVZscjFp8PZnAAa6nsVzf9sHPPdebYR2s1cnJJaq3Ymju94fc/Izvup+mVfulnSEUP7AGnAlAsSZzGZjWym+Ebg7KboTuQ65FoxstOuy8csZkMazockZmpqBJqq7KEydnh9z7FZb/7vD9VW6sIlR1es0kevBllQXUd5KqDktJwYE48q/+iv0Q1IqAWUVIGM7OD/1JvgkhhazUdFB2aXUfTq6Suwcw+XyIfc8X6mJwpv2ltaTgih6919shNs4oMH6pRUyYhnVr5CKI6nrikyGeP3RXmqR+wX30BRvNqelB1g+EYhvxANJdU01wsMIK1HIx2hKL0h3Cnr4u7ZP9duvEx6kr/01+hD17hagBQ7VFB3oTEYLSA2aP15JdaqyCjMHLPlTqao3IVwckyOUJqoaoEw0deIPf90KPdGrFOMyPuVCyksWySsNBYhgLJldj3OIoeH3shMslkLycckEwNjmFG/2i5o2QGMVqoLmPt0PLLRD4200YiqUTYcFzANmWKy7nrg4gy68J+zRxb4nQ5m4odjtof8zNWsXRot1uMqkl0M+VWIGbW3gTPBO0vZibiDVupP0PWJpR6VBlRUiaVevHf/2ryDZ/gVZuCQmVhTDH66VdGX/+wdiaoGoWr8B1keAlCSDg9KAvX0ewkW5ogx4tvIB1Djz/3jNJcQc5N34IGmoecOTiCZqo7iHYhpEIT04tffb9V7T//z+qlBS47ZuuZ9qYriQuC9WYaEiSTu33ddT+v3Oiwtuxpdh5wAaLR7T8f/fjLsm8bT68sz76ou+UkFRsIR5TGyWKhEOcdm90Mig7siJbmwJuIgnRgXcEYX6Ej3ZpmPPfAy88NoNHydg5MBdZ6hJXH85Pea7/1ShR9b96V1c1IWIvMeotoTPCd0F8DtRr4QQTR4YLc8XWz6RwyhkSKDY+mc/63/OAtVPS0nCQGwfjRbLVIvVX8jI/w7JFsKy1KWTpIt38FxqgdkVcrUHT61FvtJxRbztfuStU6U83T1NQL0LKsscZBhJVyryAEDX2fSDhYuR1h5bG8/nSvZRM8jHPwW1O4a3mJjVCz+AhQNK2+qGkgjmWEBfMmEhhEZu3R6E2qCPICNp+lq1JdO1KgRgFBzYX5NWaL7s06Hd+cKhIAesydvnjidaZDzZRDUFBOUG9S3D5io9aadcfw6iPtg7dRt5s5xGvcHtqfkm23L/7DS8oLfqc44RztTsi+h+tffLv6+Te11wcp1VZBQaQp1RekBGcONH5MeFRLMD92UuUNFW1Qw6apaboSTc2UOMJH3V+OFtGZIHh4akujQq3Vuqbu1NKX3gOU3ef9EakUJ5xTTUw5DBcFPpePg0Whi3MLH3jVxMUfMJtPRNjcSiQHdgy+/N7qx18isUoCsdVVX6ge/5LJV78PRTeipK1Tx7PWE7hTwqBgIlOorQaX/l3vGa9XNjpa4o3HYeVGFeurHM8yayVqsVedAZhjVu2XvJCtKYp31iM+9hl0/jvk6ndRdyX55mVbaW657UGB/AYiotmjAXZIJz+E6q+Qu79tTn0FrTqebC225lN/D90Vcs17+dC9Sv7to5zCEefzY/8cq09WtQRiNtVtX9C5h7Q36ysFENmKZo+kyfVECrG6ciutPZke/hkVU6p16pX5sa7DnlCmiF5TxAbSmDFT6lkowVC9xFvOR2dK7Yic8QjyNmWWrURdjYZnZQaVzHoqRbs4SM5RSeJCMzufFMfDWB0rNmB2nR7cSaZghxTSsNNdVc5G6xqbTs4sKKMiMwnlcTYDEsYZTeTRSM1Fh498FN12NRUd2KrRzhEBQZl1NDTrtvDUmqCnRqRCZbc45Yn1XddhYtLlHbl1tKrC1lR25eCOpf98N5U9AstwQKKYnIEKicIkwkkGv1FieI5ZE42Qbf6kT0QieYhpyFjnWtbxHEg9vYD0Gg3N2iP4zKfUl3+W+tNKNUlmFuF0IcKqwMyapa/+o1m9vnPeb+OIR/H6Y6t7biLTIVE430WX99tajbEP/Wr+7/9H99z/YU4+lyZXyPwBe8/11dVflR3388rVTq7O6Z6NfnapWbu5/6K3qa0V7PqQZnaNDVlC0qn2msY1MVe3/Mje/GNRompQTK3svuit5ZNe5qxC0/BJE4Q87I1Gc80XKxy45U6i1TXEwGSYpObTL5aD99FNn9GJNSRVrkHp8UZZdZRqdMksttecLHH7uTdnjNYL8qO38XM+R+iQClnLJz4fxz5NH/whdt1E1SGd2kjrH4ONjwnSsAJT2p03ynX/qhMrWGzICg3JkGaPJ9NVW4sKFwUf81S77WqAXUGVH9pZRkpgkAhNb8RojobzCs6Kr+hVE+xUoBBLxDjmyWNtUW060WqzwgibU6MrKFpCosXY5DWC6lICAySomba0BOsKkyvNoy6QKz6G2fVUjUJYQLLNsTX1p8vHvjBr71DEEuNwVvEappkI1RJYicpzXmB/8h9SlPDPJfRJxQOzaH5feeaFKDpkK1GnOgeoFOe+CD/4AsHpVQia4ueqSlqTMSimVWpVRXeSiKiuNbEi8oDsu6skrtEVQx43/YpTpy9zYVrmZhPQEQCzuC0ompcvIMAw6rr/wr9Ymlg1/Or7aXo1qqHaOnMBCBUwA8w6s3LxS39LvenOWc8uTrtwdOOPaXatR/Ags362lnoTUi0NvvMxXP4pNSVZC7VUdjG7kurKL0R3cTMr66u/LE99pc6ug1qoGiLZcAyMIRNpk06IT52wEJHAdMTBhsoZsaOlz78dqzcVpzyZpHYqLfkYPAqeAQ0tsKapSMPRUqMEgtTFeX9THbiPdvwC5aTWS4mZgrY3NOUS2O60V8X6szC9RUcHCYakVhWyQlzah3+uP3hLccH7YAqVmuyIzAQdexGOvcgnlM5jTESZYUrZc5v97pvIjmCYyIZ8GKpCWx7v0XHO7/bIJ6I7S1LHHZoGSI0DxmB0kE/8A9pzk9z5PerOkNoYV7wJpUb8IFNd8YqjsO40Uo3Qp2S5EmYl2UySUich92tp2DQj+Kpk+ga5N2usVEXSnL7th2gKUimf8XqsP5YO7aGyR0XBbGAYXIBLtaJ7t/cveqPZdKKKBXM2bNGWAHmDcpZBuvz5y4asLY46vXzaa3j/w0Qk6lHgAKMs0e3p3P7iyFPK839LraXo0M1M1pqNx5XnPJsO7YVXPaKWwaunE9vaNTBAApJIaVfHuNJAp/T98bBwI3LUKx5rwvZqJpFJrC4Jys1yMkxzMiWhXLAlc4Hs9KjT0fn9/ee8qXPha+jgHgWrFTfwCdRKRDEBF/IX/u1t9Y67zBNeyptPgq1RlAmVJg6YBpDCFJhapd1JMiV6E5iccRJBYbIOUiIrVKs9sEd23AuHMXMkyxPOweQsGQ597miZE4aVVgKRn6jbl4KH3/tkVMqEV7XgOCHwOk5RcR/NLMEBzNm4mahH3Kq3tyJTmqd+kCY3UL0U5BEidiqT98ixHqH5pWIxuQ5bzkE9H5yFvP8OerNy12XVt16hB+5RLiw6pNbYEfx/h6YegpjKLpnS3vHV6qu/rfMPEzOkCvgt0mqJuivM0U9SIidVQGKxYitWnUijec/QTd33jPZPIFurgo+4gI54ArGjNcVMTBs1r3PMtEPafB51Z9VWOrbP0vQYDWcyTfFkGSc/aFCoQbuyRgPD1JzFttzo3LloVmzsv/6zvPUsWthLiwd0uKDDAQ3mdH4fRHu/9Tedi95Its4ts5AGCrmNdAyy2rChD/uUmFVsedEfl0/6PRzYRYsHyA7V1lSPaGkeC3s7J57T+8NPkyOM5UNOYyDSveh1ZsU6jBbJFI1bRJi7ZQSAXNsHuZqyal5zMTPKDpnSP2pXKiDbMoElRd7/tYgunH6MisynyQ3UfA9CE1GYEfHSwkxs1Nr+b72t89hnY/eDMBzOhiT55KGl1oJY920fXXuZmVzRf8lb4SwOYNIwVCES5f6sV08U0boisd4Rm4HMCgtk48sEG1ItjjqNj3gE1ZXzlJGo+djy63JfWI3Uan3/LXbvw8qGsn5ddM/z3d9kc9XAe4BAEPL6VMmt2p0TWlc8ud488e+1XiIwcemREZptMDR2kgJkSoLxyLitz6N6SFKr915ip0hIpiv3fr/60nPkmvfz/INsCjIdmA6ZDkwXRZfIyrafVZe9qv7Wa3XpoIKoXvJvUwncgR2Z45/D05uDNbISCcB85BNIbbgAHqsg3MBJsO4UWrWV1p2p3VnVOmpZJj+J4M7rojUd+YQEkh6X62oAZTT67QLaUh1JBtRwpYo2EEfN6UuDf9mqxKM5IAEqYjad2H/zpdXPvmSv+xbtul9UdWJVcfyjO497kTnyVHJeD8HJqNEWpzHBoMwglFIjLBcGROd3/8E8+hmjX1wmD94q83tJYVYfUZz9rPLc30bZUxWYgoIzum9wqfLqLb1Xf2Dwz79PpiQxakctcdxIf9UmFs4V287CSyPkV1TBxKRlx4GvlaBioyNGfncamfuhbkeClgYJxIgGC8wiz6ULhCqPKK2GzubH1nX3VR+gwVx9zWW0YoPWtf9hzsyZhbSqSQgLh6DaOftZ9sFbRl97v65cj7oi9y2a2lZJOyeaz6UxsUJBhYFSsfZo3nKS00D0wrmmKM5/sf30n9LkimgKnYM50nsVP0vVekT10CfVjhCcCa85MUVip/zgWTxxW6iDFahVWzccOL0VSaH1iI84j57wTvvjd1B3RWgtabPxH620QcwwHefhJLbGlvNw3DPlniuot4Kk8uNuq6o1urNqR/aaD8ivv4i1p2H1CeivVRRaD2hum+y6RXfdTPUC9Vel8bM6WimUCP3V5sxXe74TZfqqxzwNN35aSVSZyObyvr5sYUP1AEeci6KPlVsxs5l2/0qLCcoBYMHT3eu8TG3iDaf7bB1j00qgNc1EMkXGmD9yY18Usc4J7VDNyXM5pim2rFRTFRQ56WotmW553u+W5/0uLc2TrbU7QUUHRGKrMAOOe4abowTNka4N096Efg4oSdfXUS0ecUHxiAt0NNDBHJlCp1a5qQU7i5Mw6021CDNZW5xyQff3/mHp42/SsktFR21NGS04H4EjOKIrmAZzKAr0J0mF1UsmqM8vaiVgcqV7UsWmrXLb1aSIuhseOeOBEwYrN0UlpIZxXfCFRNHB7Bp6+B4we6snDRqZolQNabKD7pRjKwmX3ddfQsP/NbrlalqxBvUIflNCa49eABMRY9VGArQa9l745zQ4OLryszq1imr1UwmkNk5UNUKYBCWvMygR06G9xbP/EFOrVKwzIgMbFSnPeX713Y/X9/2SptfAGbgiWAdnjXzfrhEpZtfwyg2kSswRYBRAyxadafRW6dw2ZUDy5IDUi/UZ5Q7669SryHA8f5iJuEO2Mo96OR28117/L9Rf7TgKiIE12qy6JlY9QHcllZNqnUogm8e9TXf+Uq1V7+cYOkekVBRazsrSAbrnv+jObzincFe5w3RQdNGbceYJ7hdE3FyX9NA287i3YPZoklph/GKGIRVedZKuOUF2Xk/ccVAganiLOk0zS2tPrYXU9LD+DNl+LXVm4NQ33Ew+kiZgtF7EpsdiapPaKvDo82MR40gNv7eioJDm6NpMV5yUo7N0cn1PtpagJr+oRUxqUA5AqpasJbHUm8LkCi46NBrI/H4rlZrCt83ynEnbOk6ay3+iYbTq1zSIikJNoWJlMCf1iDp9zK6jyZUs1tiaXS8uKYMj6VISkWGtq+KxL+y88n2wlub2Ebt+HpJQDEeFdSI2KDs8t6c4+RzeegYtHPIHYHDfhWE5dMDMbOJ1R2tdEVFx5jMR6FNOH5yd8TIbXVoya48qTniM80BLGjT+al1stCCUZ17EtqJuz3UrvEapk4w4sK981JN0YlrEMhtD1nQne3/4yfL4s3hxHp2eKnltHleKFIxOwbOry0ee51swYnu/8+7u0y/m3Q/RYI5MAWOYAcN55zCUCIooZOEcmw7u6T715Z2nv0ZDgA58CKtFp/uK93J/lhb2U9Hx/D2GcwIjqG8YMajbQzUqTr0A3QkS6zS+gyh3WCHcwepH0nAulHuRw6PqhDxJuTvDW85xgTgXyg+GiQXZGo99C286Gws7nMNQwIqCwKQIPRbS0RKOfIIrPdkUJDVmj8Wj34iFbUEpE+SH8U7KpAYxyinqrkZ/Nfor0V+JzjSZUlVUqmwSADBQdGhxP286m896ndhaXUkSKiwSITCtOwVL+9NYESCvxKWqqqMBlbNYf7rayhDhyCdRORHYcVGr0MGIRUhJrDnmybSMyeu4+zrG+vV5HqKNQlhBRObt73hHhqXTJgEm6fdq288RTQHqlBnAFERaXf/dpW9/dHj5x0dXfMZe9UW993pMrTBrjgwIkvAtTLm+QrNDmiErvdCeAbi+8YrR1z4w/OY/ja74dP2TL9r7bsDkimLNEV4Gr0VNaDKqPMnE1sXRpxZnPp32P6zb7kA9RKeDooAJAxGP6VVUI5Kq8/gXTLzuY2bj1vrKz5EVKjreXrgoyFZQ7b3yfXzESWotqZq1R8i2O/T2n2JmNRXOJYEB6NKA5g/0X/635rgzyJvu5RoGEcsEVS02nyC/+pE8eAv1J30EMgWKghYOFkee3Hv1P6LbB5gdSkUsd/rFo55ob/5v2XY7lV0qCueBTDAkovt2lk+/uPP4F5KtiY2Sal2bU59cbDxeH/wVHdqNwlBRKtj/J9RNDj/nv1qFlg6h6HSf/+buS/4SSXItUVJJrFm9uTjlKXL/TbRvO3e7KEvHpnc29j61s1YP7i6OeET3Fe9BZyJssKRSEwIz0cRquuMrTsY1OG97PXZiQ4P9fNSTzOm/D2cwHqExaKQ34BJHPIHu+x4N57ScQqDbpZ9io9UAM0cWT3o3FT3AeHym1LT+DBy4hx6+hvqro8hOkvzxqsXOU8M1XWXMzoyICEUXdsgzm4pnf5Ym1vnOJeWKREpg6q3UO79G3CEUaZeJkCq4pMUDOPEFxSNfbCAgxvQmuv/7NNinpqTgNRX0hgodHuLpzea8v0LRdfMUtIevebMy1ujj2xBt2iuICOZv3vHXLaAYmhjOZqTIJOhbscXtbVPo/u2Ll1y8dNmH7cO308I+GhzUub3y4C31Dd+Ruf3FCeeQkzNKo95lo0YO7AaUwKxzexY+/afDb3zYPnSbLu7XwZwc3G3vv7m+7jJaOlScdG4UJ4tVHiJMK8O1gBlqeXZ98dgXmOPO1LqiQ3tocJAG8zQc0GgJ1VCrIcGY407vvvht3Wf/EQFmzZG04Ri54+e0sE+HCzSYl9GAV23uveofyzOf7gXKVIhQnPZkqZb0wVt1/oAOFnU4oNEA02v6r/j78rwXO8RkqAg5FyyOTT/q9MxpT5Fd99L9t9BwQeuKhos0WipOPrf3hn8xq7eACDDJeEAsTc4WZ19Ei4f0gVtp8YDaWuuKRkNWdC98Ve/Fb/EziABJg0hx1COLc1+EqZWyfwcd2k3VEqwlEYdBcHI+VA11OE+2xurNnfNf3Hv535dnPUttpVHLLB6OThBALa/cUD7uhdSf0j3b6MBOGszR0oIuDWi4SEsLNFqiot99zLP6F3+IV20ilVA4JDYORcHHqY0Eobu+SUVfXfhgBhdkSowO8cSq4ukfpt5qOPVWapwaib0mgt4KbHq8PvDfNNhPxUTDXR2GqgUQzIUfxJpHktqgK+kjojnmQl14UPfcSuWsd0gMotOg5vgIKWGlHMBmSh0u8OQm8+yPY9UJpBZc5Gy1gCe3mNqonSm690oq+sRFug8GFveb1VvN0z9A5aQrbWC6Or2Z7voK7Ii44++FDRclyQhkiqe9D2tPIbV5Aj8mJOyFQpbJSlL/Q5GP/Rx6S2InLzXMM1xnoEiP6Z43iItJZXBh//x7X2IfuAUzK72IjktNjQFD9+7unPGM3msvUVOEY82jMJM9LRqdjoho1YX98+9/mX3wZp5e7dE1DuVtDDFk/+7O417cf9X7U38PedxPM1FNIV78RIBIDuy0D9ws2+7Qg7tIhSdXYu0RfMQjecvJDkztJE7BLId225uulO13qQhvOs6cfqGZWZOSdldOgYmofuCW+qYrZc92dPtm8/Hl6U/DzBqNJuA4XIoYfOTZEFF921X2jp/r/AHuT5tjTzenXEBOPNlJrlJG6VRxW0u33SG3/lj2PawqWLGheOR5xRGP8AYR1AzTYskUIJJqaO++3t51jdz/K9l5ry4cEhUUBfozWLGRN24ttp5ZnPhYnl5NRGLroAWS/NMyxqY3pgWRXZy3t/9U7v2lHtgp1YiLDmbW8MZjzHFnmY3HeS4CkpeN00NIhDZSFRFT4Jf/Qtd+UEZzygWcrbeC1j6qePL/wZpT1NbuWY0t3XxvCNjowXvtj9+h912uUhGXBCaxJDVWHW+e8Hc46gL/oikzZiOHkxN71d/KzZ+loksoSOog3ajBVyaTvdOM/A4mIRrs4Q1nmGd+DCuPpXi1qm07OiewyoW99Qt67Qfp0INKomCyFsy87tHmqf+oq08mqYicZ72AC7nnO/qTd+ihB73OkAqZDtY80jzur/jI89SZlrWDRRqouDwpm3y0cN/aohWnnmQKHGMZVqZsmfNqGxFEw0Gp1sKYhc+/ffTdj/KqDd7t0WsIwc9gYGT39t7L3tN95sXuCaKJF21OjQN6wFotisGn3jy64jO8djO8j2RC8rvq2e7cNvXaj5QX/C7VVeCD6DK1XBZHXWMBrqe1bHnnkJgcaIK+N9H86GzhRsCdy6VbaDuyNqppZUJ5oMinGJOUR5P752QNc+CaJjE2t9OUTdE2yPH7AVETIXdsIBUnAe3/xWhA1dDfSNlFp58pGticV7ech5cnzTidMTLlYdesX3X5KDBYgkZRimgFxiwH75V7vq17bqF6gP4q3vhYHPdsKvpq68xCuPGwWzbIpD4Wy33f1weuoLmHiQvqrcDGs/nYZ6Ez5dU0NRk55oaDCpZff1GvfpfO7dDeGhRdUqvWqpsZc8iVvNKBk9VSDOegFo/8LXP+31B3xvk/NnRbxgTQ1F3nwk65/0o6cJcC6K7gdadiyxOiOkQac6sQFzSc04d+oPvvkmqeUPKaR+Kop6Lsk9RJ7WE5iCXGZA1a+o2tUgD5mFHEHiYuNNWkA6cUy7Hg/GR/9wNzf/dcroaJ8YXcaUfhWlCzm6bffhmmV+WvNlmMtmKeCrGx2++Yf9dzwQnlhmQU49+1Li4URz1y6q3foKKMHQTkE6Jcd6T5NFQEIbFMQMKQfTaerGiQO3aL2jSxOprU4FW8BYFnEvNhYv+4lk9WW3nrp/CgmMd27FjEUwnLK8ZXzqJMCPZZ7en97tzrMib/O+eS6Q/P1JehthjM4RaiSPqkPHUFL/cYGp+WichKCs35P2L9kEMP40TYbNj5yUuTqh5mdjZHZC+zWcSqKfTQQ3TDJXrnN3R0ULkkFJqx1MMDq7Uekoy4M8VbHsenv4q2nE/p2DjcS0+li6qfVWkTn0ia++b556MibMz4gshC6tim1sPZNyLnVrZJK5oRs4kKfz5K8j1Eo/4ICIYQtWnssasqVGCK+o6fycFdPLUyzMxztZQgP9rty8GH7UO3lY84X7UmMg0M7Nh9uM1c3/ULXZrD9AqyFTKxaQQpWybQ5LQc2i577udNJyLo4yuax3hDWt7xhhxMnEMhp1hmHWdOEZz3kJTaLDVkea5JJKnlI3LMbceLzEBMUFIy2Sg0W9FoehCmLAVERrF8gMqkYZrL0md/Pk5pYuQg27Q5+EbbnLwGRCI+LqakCahETM0JdGRY5ZQGJx4VWF6+7Uq+jIlKzZwgY8vsQM1ngNFb0XsgkOsuBTgfTJjftynaqapkJlvpzBY88W/5jIv1/svlwR/RrpuxsFPtiMDKHeKSHB5s9kg+8jyz9Tm0/gwicr1wZQ7TzmA72Eht8nOaVYTUZpwRaDvo+JGB13/SjDzpnKxSIuYfY1BIXWYLt2NDxpEaY7L57VBoTr9vX5gqOaKq5g3gHE3vsdkOxnJgl/GMb068+rgQvNZWCa300M44NdYsGdBMtF4z+p7sfxidLpzqVzK792NPdwyrKWBrndtDdKJ3pSel5c+1YP2QMYm0rR435tdEaVYoQVFGG8A1zZEQSCAaaMNgYzzyN60+mhg4tEZMOSwtl+RvQG1iGdmgCASirjZQWUGxgpHJKMSzDdTgRjeqOOKMzKpJNjATtmsovSAX32reiOa7PAcRJIY9mfCMIty5bTarNE6TTyIKqe+QK0UEonji1jVHigl4DcNSQ5VmjuBTXmlOeaUu7ND9d+r8wzSaJy7RX43eCp3cQNNbYDoh+wtnb+IsJgG+LHYk15eAZSsomyC0y4dIz1YFO7ZQc3Vo7kxAOd2Mxvk6GUg0425rJlCcuD4+48gEuxspKKLbUVx8yuMjnVxOBsZQWcIwhLPuSwCRACSkJDIcSlTEachVtLq0meimHZHTQCdN4pWaNgkJEVmyVSYoAn/CoAl3bWjna+aWpmNE4qhcoG36cAM2o2ma5bkijZekoQN8mASV8vjVEvOPc66xsBO+NEQIbUL80H6uyDmK2t5aSGsg5HLJuS7pAuQ1n+sXRyMSXa5CHlue7YRlubuihiADWvrayHUexkiRh/na/O8Rb7+ho6StuWNGwUcW15jgyjoBGJMbaHLDMvWnaiBY8DKhrKlA3vSZwlg2F2T1WulJrtui2uiXZcKCXovCh4DDHqWUbJVCNYvDszAJQQGs8V51PHNxYJp4mDR6mUHODUS8/ugEpnI/KOqhj37/uFSgY9Yd7VJHzWJYBjfxoFEEWQKz9iiuK+fDnOExo+IsoKS2xsQs1h5FpGCj8bzWJsUhpg9NQcuofa/ZQ8iihj+rNDGtKWKVnHYfknmltiZOy4htNE/Lw7Qb0eACaq61lOF5845E2t/NS6f26KoZNbJgRJnnBDnfJmoJ/Kkus6ka9KXWbSagG5A1gTKdklw9IKVfmT5Vs4OY92LbtZc2b739Z9Gsfmxo+jRGh44uk5mqZC0yTy4mr3qb9ZwDczwq2jUP7Va2mPMbs/Y4L9uzxDItCeS6xqFMUY0bKoEtM48NbQUqzYwAU+UR4wiW749wEjh1MgeBjuo1L/M0XpsyP1FlN+R7xfHnmJk1tDTvgQBWkkkagw2j0wFpZ+uZ5TGnUzQNbQLJsqxAPSJQtXjEExw2GShC05KJGQYwzMzodiG2POExZvUWr/tKOeoV1I780Zs4CEFkUIAWdrV5XHv4e7NxlNpjqssOWTWx46j1LsdCRoATJuFWTUk15dr/jV/UXLVUU+LQTukp6uInVrpmDMxmv0UiTzcueknLlagx3m+nOQ0sHwXl9TiqyyUps2xIM2nF/M21np42KqB8KpgYychsrxuM8nDhmtuWt6v/xNWKAqXKrTwOTGwAQyh8rySKxyfBd2o8ooSfbtCCYm6cvSeMj10aqWKjfxCa0c00NkUmTfTA+Aa1QWRFekeaOJbNbNP/IjdUtmIOp1mIosx+Ly8oWzcmlqdW9574MjO3C4WBY5cDcBbnJpiVjxY7T3u1lj1f/o2n7flx7N6brbF6S/nE38bgIHX7VBgYhmEYeNNmBtUjtVRc8CodJwQ3muc01gBLiA/N3Fka/vSqmfiyQ1MC2fbLWEaH6Zln3YpkUTim5pMDh1SXSVoC8hzLdQSTantaBx4OsXx22tqHOWEhw0cFTgcyVhHGqNa/6fNzAaQs240BTht+E2iK97TZ4lkDAg2oYgbeb2MQGhudNLN0acxElgFlN0Y2CLloI2q3Drxm77Ilv5IdvbpssZbHqUaXLw+vmgemdEg0Q4xk+udZc6lZlMWvy9KiTMMydrlSqY3UZ1JNorgZfiWKUIwtspw1mpm9McRWxVMvLp7ySiwdcuoYKAoQE7EoZGlRdt7be9orzJnPkLryE2Y0Pyj3+PKzBoANie08643FqU/R3feRqoIVTgTZEIwuDfTArt6L/jcff7Za6ykVmXFIjlHKTn5tLrX0sLKdoy3QQ4PsmhZoXNwao0wj9ci5doh2UNQy5momX866Loum7fwTtNzR01A99sJwY1YyOcWoHek0j1LUPi1jviJjc/5Gb7e9X5onemyCRk5GjJgRtjg2aMr8NhvRKmMwxNfI0WJXs/LNiy95gQKN9tDaioNNGhhFoQnfs5cUJOI5pTH7bts5JHU2NIlfaLmKN5S8k/1Qa8za8LJqMN8RCi6oLnfyNZrImp1UcTIBbU7jkA/LKJMkiziOw4zBW13f5YaLOTYg/HT1/UvqKz6l+3eqg15Y0XqEmTXdZ/1R58JXq+slHGayQO3ORFaDjgajS/+u/vEXdLioLqNRIsCsOarzvD8uz3nB2DR+2a5BNotNI+tl+0baLpIbCIiE0Nfxnzzsn/NeVK4GvtxYZ7xH0WouLQ+FGM9ECK2tF9fL4eZOXqcKLbkWaofhlkNHu9OGscfVsKTLNYfbp9RveKSITdMkYdlsgbfTDowh7sYfWmuikuyMfsMTXnYZtzfOcsPsnBBNzdWuh4Xq6Fjn6jBvPEMng1qeXstk4km4JnedyQy1WimyDxySI5cxdmVjjxs0noJHwRWnncusO+6y13xVHvyVDAc8uQrHnFme9WxetUlEMIanaK+VINudC4KQeiq6ffAWe/135MFf6cJ+mlxlTj6/POf57CnerM1WaDZ61OZm+80wqnS/y+1PtPC12TBAD/Mi/x//NKFTyLW4DxfTl100Y1fbHpY1A5DSeOJDvwF4kv/8+FfnWTGyNk7yYB8bhYz1UZE5gTe171Xz14sxZDAOjzpHYmNn6XoTc6jLwShxGJRUWJvLj9jHn3w7GuZD5wZKSPLOmR5+oSa0w7Loz3wQdJg7yquRxjpvwWoOd/r+f/GO4e6WPaXWAAAAAElFTkSuQmCC" alt="Market Now 로고"></a>
+    <form class="search" id="searchForm" role="search">
+      <input name="q" placeholder="찾고 싶은 상품을 검색해 보세요" data-i18n-ph="search" aria-label="상품 검색">
+      <button type="submit" data-i18n="search_btn">검색</button>
+    </form>
+    <nav class="icons" id="icons"></nav>
+  </div>
+  <div class="wrap navrow"><button class="cat-open" id="catOpen" aria-label="카테고리 열기" data-i18n="allcat">☰ 전체 카테고리</button><a class="tab on" href="#/home" data-i18n="tab_home">홈</a><a class="tab" href="#/picks" data-i18n="tab_best">베스트</a><a class="tab" href="#/fam/4" data-i18n="tab_new">신상품</a><a class="tab" href="#/deals" data-i18n="tab_deal">할인특가</a><a class="tab" href="#/travel" data-i18n="tab_event">기획전</a></div>
+  <div id="adStrip"></div>
+</header>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="카테고리">
+  <div class="dh"><span data-i18n="dh">카테고리</span><button id="drawerClose" aria-label="닫기">✕</button></div>
+  <ul id="catList"></ul>
+  <div class="dquick"><a href="#/my" data-i18n="q_my">마이메뉴</a><a href="#/cs" data-i18n="q_cs">고객센터</a><a href="#/about" data-i18n="q_about">회사소개</a></div>
+  <div class="dfoot" id="dfoot"></div>
+</aside>
+
+<main id="app" class="wrap"></main>
+
+<footer>
+  <div class="wrap foot-top"><div class="foot-info">
+    <p><a href="#/about" data-i18n="f_about">회사소개</a> · <a href="#/seller" data-i18n="f_seller">판매 시작하기</a> · <a href="#/cs" data-i18n="f_cs">고객센터</a> · <span data-i18n="f_terms">이용약관</span> · <span data-i18n="f_privacy">개인정보처리방침</span></p>
+    <div class="langs" role="group" aria-label="언어 선택"><button data-lang="ko">한국어</button><button data-lang="en">English</button><button data-lang="zh">中文</button><button data-lang="ja">日本語</button></div>
+    <div class="sns">
+      <a href="#" aria-label="인스타그램" title="인스타그램"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg></a>
+      <a href="#" aria-label="유튜브" title="유튜브"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor"/><path d="M10 9.5l5 2.5-5 2.5z" fill="#2b221c"/></svg></a>
+      <a href="#" aria-label="페이스북" title="페이스북"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.4H7.6V14h2.7v8z"/></svg></a>
+      <a href="#" aria-label="엑스" title="엑스(X)"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h4.6l4 5.6L17.4 4H20l-6.3 7.4L20.5 20h-4.6l-4.3-6-5.1 6H4.1l6.6-7.7z"/></svg></a>
+      <a href="#" aria-label="네이버 블로그" title="네이버 블로그"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><path d="M8 7h2.6l2.9 4.8V7H16v10h-2.6L10.5 12.2V17H8z" fill="#2b221c"/></svg></a>
+      <a href="#" aria-label="카카오톡 채널" title="카카오톡 채널"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4C6.5 4 2 7.5 2 11.8c0 2.8 1.9 5.2 4.7 6.6L5.6 22l4.3-2.6c.7.1 1.4.2 2.1.2 5.5 0 10-3.5 10-7.8S17.5 4 12 4z"/></svg></a>
+    </div>
+    <p><span data-i18n="f_company">마켓나우(주) · 대표 홍길동 · 사업자등록번호 000-00-00000 (예시)</span><br><span data-i18n="f_demo">본 페이지는 디자인 데모이며 실제 결제와 회원 정보는 저장되지 않습니다.</span></p>
+  </div>
+  </div>
+</footer>
+<div class="pop" id="pop" hidden><div class="pop-card"><button class="pop-x" id="popX" aria-label="닫기">✕</button><span class="pop-tag" data-i18n="pop_tag">가을 세일 · 7일 남음</span><h2 data-i18n-html="pop_t">단풍처럼 뜨거운<br>가을 특가</h2><p data-i18n="pop_s">최대 74% 할인 · 여행, 식품, 생활 전 품목</p><div class="pop-btns"><a class="btn inline" href="#/deals" id="popGo" data-i18n="pop_go">특가 보러가기</a><button class="pop-later" id="popToday" data-i18n="pop_later">오늘 하루 보지 않기</button></div></div></div>
+<div class="backbar" id="backWrap" hidden><button class="back" id="backBtn" data-i18n="back">← 이전 페이지</button></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const won = n => n.toLocaleString('ko-KR') + '원';
+const fmt = n => n.toLocaleString('ko-KR');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const stars = r => { const n = Math.round(r); return '★'.repeat(n) + '☆'.repeat(5 - n); };
+const disc = p => Math.round((1 - p.p / p.o) * 100);
+
+const CATS = [
+  {id:'fashion',n:'패션의류/잡화',e:'👗'}, {id:'beauty',n:'뷰티',e:'💄'},
+  {id:'baby',n:'출산/유아동',e:'👶'}, {id:'food',n:'식품',e:'🍎'},
+  {id:'kitchen',n:'주방용품',e:'🍳'}, {id:'living',n:'생활용품',e:'🧹'},
+  {id:'interior',n:'홈인테리어',e:'🛋️'}, {id:'digital',n:'가전디지털',e:'💻'},
+  {id:'sports',n:'스포츠/레저',e:'⚽'}, {id:'auto',n:'자동차용품',e:'🚗'},
+  {id:'book',n:'도서/음반/DVD',e:'📚'}, {id:'toy',n:'완구/취미',e:'🧸'},
+  {id:'office',n:'문구/오피스',e:'✏️'}, {id:'pet',n:'반려동물용품',e:'🐾'},
+  {id:'health',n:'헬스/건강식품',e:'💊'}, {id:'travel',n:'여행/티켓',e:'✈️'},
+  {id:'theme',n:'테마관',e:'🎁'}, {id:'seller',n:'입점/판매 신청',e:'🏪'}
+];
+// [id, 카테고리, 상품명, 판매가, 정가, 이모지, 익일배송, 설명, 선택옵션, 사이즈여부, 별점, 만족도(%), 리뷰수, 여행그룹]
+const RAW = [
+ [1,'fashion','오버핏 맨투맨 티셔츠',19900,39000,'👕',1,'부드러운 기모 안감으로 사계절 편하게 입는 오버핏 맨투맨',[],1,4.6,94,1280],
+ [2,'beauty','수분 진정 시트마스크 10매',12900,24000,'🧴',1,'수분 충전과 진정을 동시에, 자극 없는 순한 시트',['10매입','20매입 대용량'],0,4.7,96,2310],
+ [3,'food','유기농 그릭요거트 대용량',8900,13900,'🥛',0,'우유 본연의 맛을 살린 무가당 그릭요거트',['1kg 1개','500g 2개'],0,4.5,91,740],
+ [4,'digital','무선 블루투스 이어폰',39000,89000,'🎧',1,'노이즈 캔슬링과 20시간 재생, 가벼운 무선 이어폰',['블랙','화이트','민트'],0,4.4,89,5120],
+ [5,'living','극세사 발수건 6종 세트',15900,29000,'🧺',0,'흡수력 뛰어난 극세사 소재의 얇고 가벼운 발수건',['그레이 세트','아이보리 세트'],0,4.6,93,960],
+ [6,'sports','논슬립 요가 매트 6mm',21000,35000,'🧘',1,'미끄럼 방지 TPE 소재, 6mm 두께의 쿠션감',['퍼플','블루','그린'],0,4.5,92,1640],
+ [7,'baby','순면 아기 물티슈 캡형',6900,11000,'🧻',0,'99% 순수 정제수 사용, 민감한 아기 피부용',['캡형 10개입','리필 5개입'],0,4.8,97,3200],
+ [8,'pet','고양이 자동 급식기',45000,68000,'🐱',1,'타이머 설정으로 정해진 시간에 자동 급여',['화이트','그레이'],0,4.3,88,870],
+ [9,'book','처음 시작하는 파이썬',18000,22000,'📘',0,'입문자를 위한 실습 중심 파이썬 학습서',['종이책','전자책'],0,4.7,95,420],
+ [10,'auto','차량용 무선 충전 거치대',17900,26000,'🚗',1,'무선 충전을 지원하는 원터치 차량용 거치대',['블랙','실버'],0,4.4,90,2050],
+ [11,'fashion','데일리 크로스백',29000,49000,'👜',0,'가볍고 튼튼한 데일리 크로스백, 수납 포켓 3개',['블랙','베이지','브라운'],0,4.3,87,610],
+ [12,'digital','20000mAh 보조배터리',27900,41000,'🔋',1,'20000mAh 대용량, 고속 충전 지원',['블랙','화이트'],0,4.5,91,4100],
+ [13,'kitchen','논스틱 프라이팬 28cm',29900,45000,'🍳',1,'코팅이 잘 벗겨지지 않는 내구성 좋은 논스틱 팬',['기본','인덕션용'],0,4.6,93,1520],
+ [14,'health','종합 비타민 90일분',19900,27000,'💊',0,'매일 챙기기 좋은 종합 비타민',['90정 1병','180정 2병'],0,4.2,85,980],
+ [15,'toy','클래식 블록 세트 500pcs',24900,39000,'🧸',1,'창의력을 키워주는 500조각 클래식 블록',['기본 세트','확장 세트'],0,4.7,96,1890],
+ [16,'travel','여행용 파우치 3종',12900,19000,'🧳',0,'여행 필수품을 깔끔하게 정리하는 3종 파우치',['블랙 3종','그레이 3종'],0,4.4,89,530],
+ [17,'interior','북유럽 쿠션 커버 세트',14900,25000,'🛋️',0,'북유럽 감성의 린넨 쿠션 커버 세트',['베이지','그레이'],0,4.5,90,720],
+ [18,'office','프리미엄 볼펜 10색 세트',9900,15000,'🖊️',1,'부드러운 필기감의 10색 볼펜 세트',['기본 10색','메탈 10색'],0,4.6,94,1300],
+ [19,'fashion','기모 후드 집업',34900,52000,'🧥',1,'보온성 좋은 기모 안감의 가을 필수 후드 집업',[],1,4.5,92,880],
+ // 가을 여행 나들이 (가족 테마)
+ [101,'travel','테마파크 자유이용권',58000,80000,'🎡',0,'놀이기구를 마음껏 즐기는 가족 자유이용권',['1일권','2일권'],0,4.6,93,1420,'park'],
+ [102,'travel','아쿠아리움 패밀리 입장권',68000,92000,'🐠',0,'바다 생물을 가까이서 보는 가족 관람 티켓',['성인2 아동2','성인1 아동1'],0,4.8,97,860,'park'],
+ [103,'travel','가을 놀이공원 시즌 패스',129000,180000,'🎢',0,'가을 시즌 동안 무제한으로 이용하는 패스',['1개월','3개월'],0,4.4,88,640,'park'],
+ [104,'travel','어린이 과학관 체험 입장권',18000,25000,'🔬',0,'아이가 직접 만지며 배우는 체험형 과학관',['성인 1, 아동 1','성인 2, 아동 2'],0,4.7,95,1100,'kids'],
+ [105,'travel','국립 전시관 특별전 티켓',12000,16000,'🖼️',0,'가을 특별 전시를 함께 관람하는 티켓',['1인','2인'],0,4.5,90,520,'kids'],
+ [106,'travel','고궁 & 관광 투어 패스',24000,35000,'🏯',0,'고궁과 명소를 하루에 둘러보는 관광 패스',['1일','2일'],0,4.6,92,780,'kids'],
+ [107,'travel','온천 스파 가족 이용권',39000,55000,'♨️',0,'온천수로 피로를 푸는 가족 스파 이용권',['대인 2 소인 1','대인 2 소인 2'],0,4.5,91,690,'spa'],
+ [108,'travel','워터파크 주간 입장권',34000,48000,'🌊',0,'시원한 물놀이를 즐기는 주간 입장권',['주간 대인','주간 소인'],0,4.3,86,1240,'spa'],
+ [109,'travel','찜질방 & 사우나 패키지',8900,34000,'🧖',0,'가족이 함께 쉬는 찜질방 & 사우나 패키지',['기본','타월 포함'],0,4.4,89,410,'spa'],
+ [110,'travel','도쿄 테마파크 1일 입장권',79000,98000,'🗼',0,'해외에서 즐기는 도쿄 테마파크 입장권',['성인','아동'],0,4.6,93,310,'abroad'],
+ [111,'travel','오사카 테마파크 2일 입장권',118000,150000,'🇯🇵',0,'오사카 테마파크를 이틀 동안 즐기는 티켓',['성인','아동'],0,4.5,91,260,'abroad'],
+ [112,'travel','방콕 해양 아쿠아리움 입장권',42000,55000,'🦈',0,'열대 바다 생물을 만나는 해양 아쿠아리움',['성인','아동'],0,4.4,88,220,'abroad'],
+ [113,'travel','단풍 명소 1박2일 패키지',189000,260000,'🍁',0,'단풍 명소 숙박과 식사를 포함한 가족 패키지',['2인','4인 가족'],0,4.7,96,540,'maple'],
+ [114,'travel','설악산 단풍 당일 투어',49000,68000,'🏔️',0,'단풍 절정의 산을 가이드와 함께 걷는 당일 투어',['성인','아동'],0,4.5,90,470,'maple'],
+ [115,'travel','가을 숲 캠핑 & 체험 패키지',139000,180000,'🏕️',0,'가족이 함께 캠핑하고 체험하는 주말 패키지',['2인','4인'],0,4.6,92,380,'maple']
+];
+// 기본 상품 + 같은 계열(fam) 상품 3개씩 (라이트/스탠다드/프리미엄)
+const BASE = RAW.map(a => ({id:a[0],cat:a[1],n:a[2],p:a[3],o:a[4],e:a[5],x:a[6],d:a[7],ch:a[8],sz:a[9],r:a[10],s:a[11],rc:a[12],g:a[13]||'',fam:a[0]}));
+const TIERS = [{s:'라이트',f:0.8,dr:-0.2,ds:-2},{s:'스탠다드',f:1.1,dr:0,ds:1},{s:'프리미엄',f:1.45,dr:0.2,ds:3}];
+const SIBS = BASE.flatMap(b => TIERS.map((t,k) => ({...b, id:1000 + b.id*10 + (k+1), n:`${b.n} ${t.s}`,
+  p:Math.round(b.p*t.f/100)*100, o:Math.round(b.o*t.f/100)*100,
+  r:Math.min(5, Math.round((b.r+t.dr)*10)/10), s:Math.min(99, b.s+t.ds), rc:Math.round(b.rc*(0.5+k*0.25)), fam:b.id})));
+const PRODUCTS = [...BASE, ...SIBS];
+const TRIP_GROUPS = [
+  {k:'park',t:'테마파크 · 아쿠아리움',e:'🎡',d:'온 가족이 함께 즐기는 놀이공원과 바다 생물 관람'},
+  {k:'kids',t:'키즈 · 전시 · 관광지',e:'🧒',d:'아이의 호기심을 키우는 체험과 전시, 명소 여행'},
+  {k:'spa',t:'스파 · 워터파크',e:'♨️',d:'따뜻한 온천과 시원한 물놀이로 쉬어 가는 주말'},
+  {k:'abroad',t:'해외여행 티켓 · 입장권',e:'✈️',d:'가을 해외에서 만나는 테마파크와 아쿠아리움'},
+  {k:'maple',t:'가을 단풍 여행 패키지',e:'🍁',d:'단풍 명소를 숙박과 함께 가볍게 떠나는 여행'}
+];
+const REVIEWS = [
+  {who:'김*진',r:5,t:'사이즈 딱 맞고 품질도 좋아요. 재구매 의사 있어요.',l:128},
+  {who:'박*희',r:4,t:'가격 대비 만족스러워요. 배송도 빨랐습니다.',l:54},
+  {who:'이*수',r:5,t:'설명 그대로예요. 선물용으로도 좋았어요.',l:37},
+  {who:'최*우',r:3,t:'괜찮은데 색감이 사진보다 살짝 진해요.',l:12}
+];
+const HERO = [
+  {t:'가을 맞이 특가 최대 70% 할인',s:'가을 신상품을 가볍게 만나보세요',bg:'linear-gradient(100deg,#B7410E,#BE5103 55%,#D9860C)',e:'🍁'},
+  {t:'가족과 떠나는 가을 여행',s:'테마파크부터 단풍 패키지까지 한 번에',bg:'linear-gradient(100deg,#045E5E,#069494 60%,#0FAFAF)',e:'🍂'},
+  {t:'지금 판매를 시작해 보세요',s:'내 상품을 많은 고객에게 소개할 수 있어요',bg:'linear-gradient(100deg,#B7410E,#FFCE1B)',e:'🌰'}
+];
+const ADS = [
+  {t:'오늘만 무료배송 · 3만원 이상 구매 시',bg:'linear-gradient(90deg,#2e2119,#5b3d28)'},
+  {t:'가을 여행 나들이 최대 할인 진행 중',bg:'linear-gradient(90deg,#e8731a,#f5b544)'},
+  {t:'신규 회원 2,000원 쿠폰 받기',bg:'linear-gradient(90deg,#b8481a,#e8731a)'}
+];
+
+// 상태 (브라우저에 저장)
+const S = {cart:[], fav:[], user:null, order:null, edit:false, cats:{order:CATS.map(c=>c.id), hidden:[]}};
+// 언어 사전: 한국어(ko), 영어(en), 중국어(zh), 일본어(ja)
+const I18N = {
+ ko:{search:'찾고 싶은 상품을 검색해 보세요',search_btn:'검색',allcat:'☰ 전체 카테고리',tab_home:'홈',tab_best:'베스트',tab_new:'신상품',tab_deal:'할인특가',tab_event:'기획전',fast_t:'빠른배송',fast_s:'오늘 주문 내일 도착',free_t:'무료배송',free_s:'3만원 이상 구매',login:'로그인',signup:'회원가입',mypage:'마이페이지',sellpill:'판매자 가입',sellercenter:'판매자 센터',cart:'장바구니',pick:'옵션 선택',nextday:'익일배송',brand:'눈여겨볼 브랜드',series:'계열',dh:'카테고리',q_my:'마이메뉴',q_cs:'고객센터',q_about:'회사소개',f_about:'회사소개',f_seller:'판매 시작하기',f_cs:'고객센터',f_terms:'이용약관',f_privacy:'개인정보처리방침',f_company:'마켓나우(주) · 대표 홍길동 · 사업자등록번호 000-00-00000 (예시)',f_demo:'본 페이지는 디자인 데모이며 실제 결제와 회원 정보는 저장되지 않습니다.',back:'← 이전 페이지',pop_tag:'가을 세일 · 7일 남음',pop_t:'단풍처럼 뜨거운<br>가을 특가',pop_s:'최대 74% 할인 · 여행, 식품, 생활 전 품목',pop_go:'특가 보러가기',pop_later:'오늘 하루 보지 않기',h0t:'가을 맞이 특가 최대 70% 할인',h0s:'가을 신상품을 가볍게 만나보세요',h1t:'가족과 떠나는 가을 여행',h1s:'테마파크부터 단풍 패키지까지 한 번에',h2t:'지금 판매를 시작해 보세요',h2s:'내 상품을 많은 고객에게 소개할 수 있어요',ad0:'오늘만 무료배송 · 3만원 이상 구매 시',ad1:'가을 여행 나들이 최대 할인 진행 중',ad2:'신규 회원 2,000원 쿠폰 받기',sb1s:'판매자이신가요?',sb1:'판매 시작하기',sb2s:'가을 한정 기획',sb2:'가을 여행 나들이',sb3s:'금주의 특가왕',cat_fashion:'패션의류/잡화',cat_beauty:'뷰티',cat_baby:'출산/유아동',cat_food:'식품',cat_kitchen:'주방용품',cat_living:'생활용품',cat_interior:'홈인테리어',cat_digital:'가전디지털',cat_sports:'스포츠/레저',cat_auto:'자동차용품',cat_book:'도서/음반/DVD',cat_toy:'완구/취미',cat_office:'문구/오피스',cat_pet:'반려동물용품',cat_health:'헬스/건강식품',cat_travel:'여행/티켓',cat_theme:'테마관',cat_seller:'입점/판매 신청'},
+ en:{search:'Search for products',search_btn:'Search',allcat:'☰ All Categories',tab_home:'Home',tab_best:'Best',tab_new:'New',tab_deal:'Deals',tab_event:'Special',fast_t:'Fast Delivery',fast_s:'Order today, arrives tomorrow',free_t:'Free Shipping',free_s:'Orders over ₩30,000',login:'Log in',signup:'Sign up',mypage:'My Page',sellpill:'Become a Seller',sellercenter:'Seller Center',cart:'Cart',pick:'Select Options',nextday:'Next-day',brand:'Featured Brands',series:'Series',dh:'Categories',q_my:'My Page',q_cs:'Customer Service',q_about:'About Us',f_about:'About Us',f_seller:'Start Selling',f_cs:'Customer Service',f_terms:'Terms of Use',f_privacy:'Privacy Policy',f_company:'Market Now Inc. · CEO Hong Gil-dong · Business No. 000-00-00000 (sample)',f_demo:'This is a design demo. Payments and member data are not stored.',back:'← Back',pop_tag:'Autumn Sale · 7 days left',pop_t:'Hot Autumn<br>Deals',pop_s:'Up to 74% off · Travel, food & home',pop_go:'Shop Deals',pop_later:"Don't show today",h0t:'Autumn deals up to 70% off',h0s:'Discover new autumn arrivals',h1t:'Autumn trips for the whole family',h1s:'From theme parks to maple tours',h2t:'Start selling today',h2s:'Reach more customers with your products',ad0:'Free shipping today · orders over ₩30,000',ad1:'Autumn trip sale now on',ad2:'Get a ₩2,000 coupon as a new member',sb1s:'Are you a seller?',sb1:'Start Selling',sb2s:'Autumn Limited',sb2:'Autumn Trips',sb3s:'Deal of the Week',cat_fashion:'Fashion/Accessories',cat_beauty:'Beauty',cat_baby:'Baby/Kids',cat_food:'Food',cat_kitchen:'Kitchen',cat_living:'Living',cat_interior:'Home Decor',cat_digital:'Electronics',cat_sports:'Sports/Leisure',cat_auto:'Auto',cat_book:'Books/Music/DVD',cat_toy:'Toys/Hobby',cat_office:'Stationery/Office',cat_pet:'Pet Supplies',cat_health:'Health/Supplements',cat_travel:'Travel/Tickets',cat_theme:'Theme Zone',cat_seller:'Sell With Us'},
+ zh:{search:'搜索您想要的商品',search_btn:'搜索',allcat:'☰ 全部分类',tab_home:'首页',tab_best:'热销',tab_new:'新品',tab_deal:'特价',tab_event:'专题',fast_t:'极速配送',fast_s:'今天下单，明天到达',free_t:'免运费',free_s:'满3万韩元',login:'登录',signup:'注册',mypage:'我的页面',sellpill:'成为卖家',sellercenter:'卖家中心',cart:'购物车',pick:'选择选项',nextday:'次日达',brand:'精选品牌',series:'系列',dh:'分类',q_my:'我的页面',q_cs:'客服中心',q_about:'公司介绍',f_about:'公司介绍',f_seller:'开始开店',f_cs:'客服中心',f_terms:'服务条款',f_privacy:'隐私政策',f_company:'马克特现在株式会社 · 代表 洪吉童 · 营业执照号 000-00-00000（示例）',f_demo:'本页面为设计演示，不会保存实际付款和会员信息。',back:'← 返回',pop_tag:'秋季大促 · 剩余7天',pop_t:'如枫叶般火热<br>秋季特惠',pop_s:'最高优惠74% · 旅游、食品、生活全品类',pop_go:'查看特价',pop_later:'今日不再显示',h0t:'秋季特惠 最高70%优惠',h0s:'轻松遇见秋季新品',h1t:'全家一起的秋季旅行',h1s:'从主题乐园到红叶套餐',h2t:'现在就开始销售吧',h2s:'把您的商品介绍给更多顾客',ad0:'今日限定免运费 · 满3万韩元',ad1:'秋季旅行大促进行中',ad2:'新会员领取2,000韩元优惠券',sb1s:'您是卖家吗？',sb1:'开始销售',sb2s:'秋季限定',sb2:'秋季旅行',sb3s:'本周特价王',cat_fashion:'服饰/配饰',cat_beauty:'美妆',cat_baby:'母婴/儿童',cat_food:'食品',cat_kitchen:'厨房用品',cat_living:'生活用品',cat_interior:'家居装饰',cat_digital:'家电数码',cat_sports:'运动/休闲',cat_auto:'汽车用品',cat_book:'图书/音像',cat_toy:'玩具/爱好',cat_office:'文具/办公',cat_pet:'宠物用品',cat_health:'健康/保健食品',cat_travel:'旅游/票务',cat_theme:'主题馆',cat_seller:'入驻申请'},
+ ja:{search:'探したい商品を検索',search_btn:'検索',allcat:'☰ 全カテゴリ',tab_home:'ホーム',tab_best:'ベスト',tab_new:'新商品',tab_deal:'割引特価',tab_event:'企画展',fast_t:'速達配送',fast_s:'今日注文・明日お届け',free_t:'送料無料',free_s:'3万ウォン以上購入',login:'ログイン',signup:'会員登録',mypage:'マイページ',sellpill:'出品者登録',sellercenter:'出品者センター',cart:'カート',pick:'オプション選択',nextday:'翌日配送',brand:'注目のブランド',series:'シリーズ',dh:'カテゴリー',q_my:'マイページ',q_cs:'カスタマーサポート',q_about:'会社概要',f_about:'会社概要',f_seller:'販売を始める',f_cs:'カスタマーサポート',f_terms:'利用規約',f_privacy:'プライバシーポリシー',f_company:'マーケットナウ株式会社 · 代表 ホン・ギルドン · 事業者番号 000-00-00000（例）',f_demo:'本ページはデザインデモです。実際の決済・会員情報は保存されません。',back:'← 戻る',pop_tag:'秋のセール・残り7日',pop_t:'紅葉のように熱い<br>秋の特価',pop_s:'最大74%割引・旅行、食品、生活用品',pop_go:'特価を見る',pop_later:'今日は表示しない',h0t:'秋の特価 最大70%割引',h0s:'秋の新商品をチェック',h1t:'家族と行く秋の旅',h1s:'テーマパークから紅葉パッケージまで',h2t:'今すぐ販売を始めましょう',h2s:'商品を多くのお客様にご紹介できます',ad0:'本日限定送料無料・3万ウォン以上',ad1:'秋の旅行セール開催中',ad2:'新規会員限定2,000ウォンクーポン',sb1s:'出品者の方はこちら',sb1:'販売を始める',sb2s:'秋限定企画',sb2:'秋の旅行',sb3s:'今週の特価王',cat_fashion:'ファッション/雑貨',cat_beauty:'ビューティー',cat_baby:'ベビー/キッズ',cat_food:'食品',cat_kitchen:'キッチン用品',cat_living:'生活用品',cat_interior:'ホームインテリア',cat_digital:'家電・デジタル',cat_sports:'スポーツ/レジャー',cat_auto:'カー用品',cat_book:'本・CD・DVD',cat_toy:'おもちゃ/趣味',cat_office:'文房具/オフィス',cat_pet:'ペット用品',cat_health:'ヘルス/健康食品',cat_travel:'旅行/チケット',cat_theme:'テーマ館',cat_seller:'出店・販売申請'}
+};
+let LANG = 'ko';
+try { LANG = localStorage.getItem('mn5_lang') || 'ko'; } catch(e) {}
+const tr = k => (I18N[LANG] && I18N[LANG][k] !== undefined) ? I18N[LANG][k] : (I18N.ko[k] !== undefined ? I18N.ko[k] : k);
+// 화면 문구를 선택한 언어로 바꿈
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = tr(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === LANG));
+  $('#adStrip').innerHTML = bannerHTML(ADS.map((a,i) => ({...a, t: tr('ad'+i)})), 'ad');
+}
+// 번역 사전: 한국어 문구 -> [영어, 중국어, 일본어]
+const PH = {"사이즈 가이드": ["Size Guide", "尺码指南", "サイズガイド"], "사이즈를 선택해 주세요": ["Please select a size", "请选择尺码", "サイズを選択してください"], "옵션을 선택해 주세요": ["Please select an option", "请选择选项", "オプションを選択してください"], "선택해 주세요": ["Please select", "请选择", "選択してください"], "선택 옵션": ["Option", "选项", "オプション"], "사이즈": ["Size", "尺码", "サイズ"], "색상": ["Color", "颜色", "カラー"], "가슴둘레": ["Chest", "胸围", "胸囲"], "어깨너비": ["Shoulder", "肩宽", "肩幅"], "정가": ["List price", "原价", "定価"], "총 상품금액": ["Subtotal", "商品总额", "商品金額"], "즐겨찾기 됨": ["Saved", "已收藏", "登録済み"], "즐겨찾기에 추가했어요": ["Added to favorites", "已添加到收藏", "お気に入りに追加しました"], "즐겨찾기에서 뺐어요": ["Removed from favorites", "已从收藏中移除", "お気に入りから削除しました"], "즐겨찾기": ["Favorite", "收藏", "お気に入り"], "장바구니 담기": ["Add to Cart", "加入购物车", "カートに入れる"], "바로 구매": ["Buy Now", "立即购买", "今すぐ購入"], "상품 설명 · 상품평": ["Description · Reviews", "商品说明 · 评价", "商品説明・レビュー"], "상품 설명": ["Description", "商品说明", "商品説明"], "상세 이미지와 사용 방법은 실제 상품 페이지에서 확인할 수 있습니다. (설명 예시)": ["Detailed images and usage info are on the product page. (sample)", "详情图片和使用方法可在商品页面查看。（示例）", "詳細画像と使い方は商品ページでご確認いただけます。（例）"], "이 만족했어요": [" satisfied", " 表示满意", " が満足しました"], "같은 계열 상품 비교": ["Compare Same-Series Products", "同系列商品对比", "同シリーズ商品の比較"], "상품 문의": ["Product Q&A", "商品咨询", "商品への問い合わせ"], "Q. 사이즈가 실제와 다른가요?": ["Q. Does the size run differently?", "Q. 尺码和实物有差异吗？", "Q. 実物とサイズが違いますか？"], "A. 사이즈 가이드의 치수를 기준으로 제작되며, 개인차가 있을 수 있어요.": ["A. Made according to the size guide; slight variation may occur.", "A. 以尺码指南尺寸为准制作，可能存在个体差异。", "A. サイズガイドの寸法を基準に製作しており、個人差がある場合があります。"], "Q. 재고가 없으면 언제 입고되나요?": ["Q. When will it be restocked?", "Q. 没有库存时何时到货？", "Q. 在庫切れの場合、いつ入荷しますか？"], "A. 재입고 일정은 판매자가 등록하며, 상품 페이지에 안내됩니다.": ["A. The restock date is set by the seller and shown on the product page.", "A. 补货时间由卖家登记，并在商品页面公布。", "A. 再入荷日は販売者が登録し、商品ページでご案内します。"], "궁금한 점을 남겨 주세요": ["Leave your question here", "请留下您的问题", "ご質問をご記入ください"], "문의 등록": ["Submit Question", "提交咨询", "質問を送信"], "배송 · 교환 · 반품 안내": ["Shipping · Exchange · Returns", "配送·换货·退货说明", "配送・交換・返品のご案内"], "🚚 배송 안내": ["🚚 Shipping", "🚚 配送说明", "🚚 配送のご案内"], "🔄 교환 안내": ["🔄 Exchange", "🔄 换货说明", "🔄 交換のご案内"], "↩️ 반품 안내": ["↩️ Returns", "↩️ 退货说明", "↩️ 返品のご案内"], "3만원 이상 구매 시 무료배송, 미만은 3,000원입니다. 익일배송 표시 상품은 평일 오후 2시 이전 주문 시 다음 날 도착합니다. 도서산간 지역은 추가 배송비가 발생할 수 있어요.": ["Free shipping on orders of ₩30,000 or more; otherwise ₩3,000. Next-day items ordered before 2 PM on weekdays arrive the next day. Remote areas may incur extra fees.", "满3万韩元免运费，未满收取3,000韩元。标有次日达的商品在工作日下午2点前下单，次日送达。偏远地区可能产生额外运费。", "3万ウォン以上で送料無料、未満は3,000ウォンです。翌日配送表示の商品は平日14時までの注文で翌日お届けします。離島・山間部は追加料金がかかる場合があります。"], "수령 후 7일 이내 마이메뉴에서 교환을 신청할 수 있어요. 사용하지 않은 원래 상태로 반송해 주세요. 단순 변심의 경우 교환 배송비는 고객 부담입니다.": ["You can request an exchange in My Page within 7 days of delivery. Please return unused items in original condition. For change-of-mind exchanges, return shipping is paid by the customer.", "收货后7天内可在我的页面申请换货。请以未使用的原状退回。因个人原因换货的，换货运费由顾客承担。", "受け取り後7日以内にマイページから交換を申請できます。未使用の元の状態でご返送ください。お客様都合の場合、返送料はお客様のご負担となります。"], "수령 후 7일 이내 신청 가능합니다. 상품 훼손이나 사용 흔적이 있으면 반품이 제한될 수 있어요. 환불은 반품 상품 확인 후 영업일 기준 3일 내 처리됩니다.": ["Returns are accepted within 7 days of delivery. Returns may be restricted if the product is damaged or used. Refunds are processed within 3 business days after inspection.", "收货后7天内可申请退货。商品如有损坏或使用痕迹，可能无法退货。退款将在确认退货商品后3个工作日内处理。", "受け取り後7日以内にお申し込みいただけます。商品に破損や使用痕がある場合は返品できないことがあります。返金は返品商品の確認後、営業日3日以内に処理されます。"], "판매가": ["Price", "售价", "販売価格"], "판매가 (원)": ["Price (₩)", "售价（韩元）", "販売価格（ウォン）"], "할인율": ["Discount", "折扣率", "割引率"], "별점": ["Rating", "评分", "評価"], "만족도": ["Satisfaction", "满意度", "満足度"], "일반배송": ["Standard", "普通配送", "通常配送"], "익일배송": ["Next-day", "次日达", "翌日配送"], "신규 상품": ["New Arrival", "新品", "新商品"], "배송": ["Shipping", "配送", "配送"], "빠른배송": ["Fast Delivery", "极速配送", "速達配送"], "무료배송": ["Free Shipping", "免运费", "送料無料"], "3만원 이상 구매": ["Orders over ₩30,000", "满3万韩元", "3万ウォン以上購入"], "오늘 주문 내일 도착": ["Order today, arrives tomorrow", "今天下单，明天到达", "今日注文・明日お届け"], "3만원": ["₩30,000", "3万韩元", "3万ウォン"], "테마파크 · 아쿠아리움": ["Theme Parks · Aquarium", "主题乐园 · 水族馆", "テーマパーク・水族館"], "키즈 · 전시 · 관광지": ["Kids · Exhibitions · Sights", "儿童 · 展览 · 景点", "キッズ・展示・観光地"], "스파 · 워터파크": ["Spa · Water Park", "SPA · 水上乐园", "スパ・ウォーターパーク"], "해외여행 티켓 · 입장권": ["Overseas Tickets · Admission", "海外旅游票 · 门票", "海外旅行チケット・入場券"], "가을 단풍 여행 패키지": ["Autumn Foliage Tour Packages", "秋季红叶旅游套餐", "秋の紅葉旅行パッケージ"], "온 가족이 함께 즐기는 놀이공원과 바다 생물 관람": ["Theme parks and marine life for the whole family", "全家同乐的游乐园与海洋生物观赏", "家族みんなで楽しむテーマパークと海洋生物の観賞"], "아이의 호기심을 키우는 체험과 전시, 명소 여행": ["Hands-on exhibits and sightseeing that spark curiosity", "培养孩子好奇心的体验、展览与景点游", "子どもの好奇心を育てる体験・展示・名所めぐり"], "따뜻한 온천과 시원한 물놀이로 쉬어 가는 주말": ["A relaxing weekend with hot springs and water play", "温泉与清凉戏水的悠闲周末", "温泉と水遊びでリフレッシュする週末"], "가을 해외에서 만나는 테마파크와 아쿠아리움": ["Overseas theme parks and aquariums this autumn", "秋季海外的主题乐园与水族馆", "秋の海外で楽しむテーマパークと水族館"], "단풍 명소를 숙박과 함께 가볍게 떠나는 여행": ["Easy foliage trips with overnight stays", "住宿结合的红叶名所轻松之旅", "宿泊付きで気軽に行く紅葉名所の旅"], "가을 여행 나들이": ["Autumn Trips", "秋季旅行", "秋の旅行"], "가족과 함께 떠나는 가을, 테마파크부터 단풍 패키지까지 한 곳에서 골라 보세요.": ["Plan your family autumn trip, from theme parks to maple packages, all in one place.", "与家人一起的秋季出游，从主题乐园到红叶套餐，一站挑选。", "家族と行く秋の旅。テーマパークから紅葉パッケージまで、ここで選べます。"], "전체": ["All", "全部", "すべて"], "오늘 주문하면 내일 도착, 평일 14시 이전 주문 기준": ["Order by 2 PM on weekdays for next-day delivery", "工作日下午2点前下单，次日送达", "平日14時までのご注文で翌日お届け"], "3만원 이상 구매 시 배송비 무료, 미만은 3,000원": ["Free shipping over ₩30,000; otherwise ₩3,000", "满3万韩元免运费，未满收取3,000韩元", "3万ウォン以上で送料無料、未満は3,000ウォン"], "빠른배송 안내": ["Fast Delivery Info", "极速配送说明", "速達配送のご案内"], "무료배송 안내": ["Free Shipping Info", "免运费说明", "送料無料のご案内"], "⏰ 주문 마감 시간": ["⏰ Order Cutoff", "⏰ 下单截止时间", "⏰ 注文締め切り時間"], "평일 14시 이전 결제 완료 상품은 다음 날 도착합니다. 주말과 공휴일 주문은 다음 영업일 기준입니다.": ["Orders paid before 2 PM on weekdays arrive the next day. Weekend and holiday orders count from the next business day.", "工作日下午2点前完成付款的商品次日送达。周末和节假日订单从下一个工作日起计算。", "平日14時までに決済が完了した商品は翌日お届けします。週末・祝日のご注文は翌営業日を基準とします。"], "📦 익일배송 대상": ["📦 Next-day Eligibility", "📦 次日达适用范围", "📦 翌日配送の対象"], "상품 카드의 \"익일배송\" 표시가 있는 상품이 대상입니다. 판매자 출고 상황에 따라 달라질 수 있어요.": ["Products marked \"Next-day\" are eligible. This may vary by seller dispatch.", "商品卡片上标有\"次日达\"的商品符合条件。可能因卖家发货情况而异。", "商品カードに「翌日配送」と表示された商品が対象です。販売者の出荷状況により異なる場合があります。"], "📍 제외 지역": ["📍 Excluded Areas", "📍 排除地区", "📍 対象外地域"], "도서산간 일부 지역은 빠른배송이 제외되며, 일반 배송으로 안내됩니다.": ["Some remote island and mountain areas are excluded from fast delivery and get standard shipping.", "部分海岛和山区地区不适用极速配送，将按普通配送处理。", "離島・山間部の一部地域は速達配送の対象外となり、通常配送になります。"], "🎁 무료배송 조건": ["🎁 Free Shipping Terms", "🎁 免运费条件", "🎁 送料無料の条件"], "상품 금액 합계가 3만원 이상이면 배송비가 무료입니다. 3만원 미만은 3,000원이 부과됩니다.": ["Free shipping on product totals of ₩30,000 or more. Orders under ₩30,000 are charged ₩3,000.", "商品合计满3万韩元即免运费。未满3万韩元收取3,000韩元。", "商品合計3万ウォン以上で送料無料です。3万ウォン未満は3,000ウォンがかかります。"], "📍 추가 배송비": ["📍 Extra Fees", "📍 额外运费", "📍 追加送料"], "도서산간 지역은 무료배송 조건과 관계없이 추가 배송비가 발생할 수 있어요.": ["Remote areas may incur extra fees even when free shipping applies.", "偏远地区即使满足免运费条件也可能产生额外运费。", "離島・山間部は送料無料の条件にかかわらず追加送料がかかる場合があります。"], "🚫 제외 상품": ["🚫 Excluded Items", "🚫 排除商品", "🚫 対象外の商品"], "일부 대형 상품과 판매자 직접 배송 상품은 무료배송 대상에서 제외됩니다.": ["Some bulky items and seller-delivered products are excluded from free shipping.", "部分大件商品和卖家直送商品不适用免运费。", "一部の大型商品と販売者直送商品は送料無料の対象外です。"], "마켓나우에 오신 것을 환영합니다": ["Welcome to Market Now", "欢迎来到 Market Now", "マーケットナウへようこそ"], "로그인": ["Log in", "登录", "ログイン"], "회원가입": ["Sign Up", "注册", "会員登録"], "이메일": ["Email", "邮箱", "メール"], "비밀번호 (8자 이상)": ["Password (8+ characters)", "密码（8位以上）", "パスワード（8文字以上）"], "비밀번호 확인": ["Confirm Password", "确认密码", "パスワード確認"], "비밀번호": ["Password", "密码", "パスワード"], "이름": ["Name", "姓名", "お名前"], "6자 이상": ["6+ characters", "6位以上", "6文字以上"], "이용약관 및 개인정보 처리방침에 동의합니다 (필수)": ["I agree to the Terms and Privacy Policy (required)", "我同意服务条款及隐私政策（必填）", "利用規約・プライバシーポリシーに同意します（必須）"], "가입하기": ["Sign Up", "注册", "登録する"], "판매 시작하기": ["Start Selling", "开始开店", "販売を始める"], "입점/판매 신청": ["Sell With Us", "入驻申请", "出店・販売申請"], "판매자 가입하기": ["Become a Seller", "成为卖家", "出品者登録する"], "아직 판매자 가입 전이에요": ["You're not a seller yet", "您还不是卖家", "まだ出品者登録されていません"], "오버핏 맨투맨 티셔츠": ["Oversized Sweatshirt T-Shirt", "宽松卫衣T恤", "オーバーフィットスウェットTシャツ"], "수분 진정 시트마스크 10매": ["Hydrating Calming Sheet Mask 10pcs", "补水舒缓面膜 10片", "保湿鎮静シートマスク 10枚"], "유기농 그릭요거트 대용량": ["Organic Greek Yogurt Value Pack", "有机希腊酸奶 大容量", "オーガニックギリシャヨーグルト 大容量"], "무선 블루투스 이어폰": ["Wireless Bluetooth Earbuds", "无线蓝牙耳机", "ワイヤレスBluetoothイヤホン"], "극세사 발수건 6종 세트": ["Microfiber Foot Towel 6-Piece Set", "超细纤维足部毛巾6件套", "マイクロファイバー足拭きタオル6点セット"], "논슬립 요가 매트 6mm": ["Non-slip Yoga Mat 6mm", "防滑瑜伽垫 6mm", "ノンスリップヨガマット 6mm"], "순면 아기 물티슈 캡형": ["Pure Cotton Baby Wipes (Cap Type)", "纯棉婴儿湿巾（盖式）", "純綿ベビーおしりふき（キャップ式）"], "고양이 자동 급식기": ["Automatic Cat Feeder", "猫咪自动喂食器", "猫用自動給餌器"], "처음 시작하는 파이썬": ["Python for Beginners", "零基础学Python", "はじめてのPython"], "차량용 무선 충전 거치대": ["Car Wireless Charging Mount", "车载无线充电支架", "車載ワイヤレス充電ホルダー"], "데일리 크로스백": ["Daily Crossbody Bag", "日常斜挎包", "デイリークロスボディバッグ"], "20000mAh 보조배터리": ["20000mAh Power Bank", "20000mAh 移动电源", "20000mAhモバイルバッテリー"], "논스틱 프라이팬 28cm": ["Nonstick Frying Pan 28cm", "不粘煎锅 28cm", "ノンスティックフライパン 28cm"], "종합 비타민 90일분": ["Multivitamin 90-Day Supply", "综合维生素 90天量", "総合ビタミン 90日分"], "클래식 블록 세트 500pcs": ["Classic Building Block Set 500pcs", "经典积木套装 500片", "クラシックブロックセット 500ピース"], "여행용 파우치 3종": ["Travel Pouch 3-Piece Set", "旅行收纳袋 3件套", "旅行用ポーチ3点セット"], "북유럽 쿠션 커버 세트": ["Nordic Cushion Cover Set", "北欧风抱枕套装", "北欧風クッションカバーセット"], "프리미엄 볼펜 10색 세트": ["Premium Ballpoint Pen 10-Color Set", "高级圆珠笔10色套装", "プレミアムボールペン10色セット"], "기모 후드 집업": ["Fleece-lined Hooded Zip-up", "抓绒连帽外套", "裏起毛フードジップアップ"], "테마파크 자유이용권": ["Theme Park Unlimited Pass", "主题乐园畅玩票", "テーマパーク自由入場券"], "아쿠아리움 패밀리 입장권": ["Aquarium Family Ticket", "水族馆家庭门票", "水族館ファミリー入場券"], "가을 놀이공원 시즌 패스": ["Autumn Amusement Park Season Pass", "秋季游乐园季票", "秋のアミューズメントパーク シーズンパス"], "어린이 과학관 체험 입장권": ["Children's Science Museum Experience Ticket", "儿童科学馆体验门票", "子ども科学館 体験入場券"], "국립 전시관 특별전 티켓": ["National Museum Special Exhibition Ticket", "国立展览馆特展门票", "国立展示館 特別展チケット"], "고궁 & 관광 투어 패스": ["Palace & Sightseeing Tour Pass", "古宫 & 观光巴士通票", "古宮＆観光ツアーパス"], "온천 스파 가족 이용권": ["Hot Spring Spa Family Pass", "温泉SPA家庭通票", "温泉スパ ファミリー利用券"], "워터파크 주간 입장권": ["Water Park Daytime Ticket", "水上乐园日间门票", "ウォーターパーク昼間入場券"], "찜질방 & 사우나 패키지": ["Jjimjilbang & Sauna Package", "汗蒸房&桑拿套餐", "チムジルバン＆サウナパッケージ"], "도쿄 테마파크 1일 입장권": ["Tokyo Theme Park 1-Day Ticket", "东京主题乐园1日门票", "東京テーマパーク1日入場券"], "오사카 테마파크 2일 입장권": ["Osaka Theme Park 2-Day Ticket", "大阪主题乐园2日门票", "大阪テーマパーク2日入場券"], "방콕 해양 아쿠아리움 입장권": ["Bangkok Marine Aquarium Ticket", "曼谷海洋水族馆门票", "バンコク海洋水族館入場券"], "단풍 명소 1박2일 패키지": ["Foliage Spot 2-Day Package", "红叶名所2日套餐", "紅葉名所1泊2日パッケージ"], "설악산 단풍 당일 투어": ["Seoraksan Foliage Day Tour", "雪岳山红叶当日游", "雪岳山紅葉日帰りツアー"], "가을 숲 캠핑 & 체험 패키지": ["Autumn Forest Camping & Experience Package", "秋季森林露营&体验套餐", "秋の森キャンプ＆体験パッケージ"], "라이트": ["Lite", "轻量版", "ライト"], "스탠다드": ["Standard", "标准版", "スタンダード"], "프리미엄": ["Premium", "高级版", "プレミアム"], "판매자 가입": ["Become a Seller", "成为卖家", "出品者登録"], "판매자 센터": ["Seller Center", "卖家中心", "出品者センター"], "상호명": ["Business Name", "店铺名称", "店舗名"], "사업자등록번호": ["Business Reg. No.", "营业执照号", "事業者登録番号"], "대표자명": ["Representative", "法人代表", "代表者名"], "연락처": ["Phone", "联系电话", "連絡先"], "주요 판매 카테고리": ["Main Category", "主营类目", "主な販売カテゴリー"], "회사/상품 소개": ["Company / Product Intro", "公司/商品介绍", "会社・商品紹介"], "신청하기": ["Apply", "申请", "申請する"], "상품 등록": ["Register Product", "商品登记", "商品登録"], "상품명": ["Product Name", "商品名称", "商品名"], "정가 (원, 선택)": ["Original Price (₩, optional)", "原价（韩元，可选）", "定価（ウォン・任意）"], "아이콘": ["Icon", "图标", "アイコン"], "내 등록 상품": ["My Listed Products", "我的已登记商品", "登録済みの商品"], "자주 묻는 질문": ["FAQ", "常见问题", "よくあるご質問"], "운영시간 평일 09:00 – 18:00 (주말·공휴일 휴무) · 전화 1600-0000 (예시)": ["Hours: Weekdays 09:00–18:00 (closed on weekends & holidays) · Tel 1600-0000 (sample)", "营业时间：工作日09:00–18:00（周末及节假日休息）· 电话 1600-0000（示例）", "営業時間：平日 9:00–18:00（土日祝休業）・電話 1600-0000（例）"], "1:1 문의": ["1:1 Inquiry", "1对1咨询", "1:1お問い合わせ"], "문의 유형": ["Inquiry Type", "咨询类型", "お問い合わせ種類"], "기타": ["Other", "其他", "その他"], "내용": ["Details", "内容", "内容"], "문의 접수": ["Submit", "提交", "送信"], "배송은 얼마나 걸리나요?": ["How long does shipping take?", "配送需要多久？", "配送にはどのくらいかかりますか？"], "상품 출고 후 보통 1~2일 내 도착합니다.": ["Usually arrives within 1–2 days after dispatch.", "发货后通常1–2天内送达。", "出荷後、通常1〜2日でお届けします。"], "주문을 취소하고 싶어요.": ["I want to cancel my order.", "我想取消订单。", "注文をキャンセルしたいです。"], "마이메뉴에서 배송 준비 전 주문을 취소할 수 있어요.": ["You can cancel in My Page before shipping preparation.", "发货准备前可在我的页面取消订单。", "配送準備前であればマイページからキャンセルできます。"], "반품과 교환은 어떻게 하나요?": ["How do I return or exchange?", "退换货怎么办理？", "返品・交換はどうすればよいですか？"], "수령 후 7일 이내에 마이메뉴에서 신청할 수 있습니다.": ["You can apply in My Page within 7 days of delivery.", "收货后7天内可在我的页面申请。", "受け取り後7日以内にマイページから申請できます。"], "회사 소개": ["About Us", "公司介绍", "会社概要"], "마켓나우는 고객이 원하는 상품을 가장 빠르고 편하게 찾을 수 있도록 돕는 온라인 쇼핑 플랫폼입니다. (소개 문구 예시)": ["Market Now is an online shopping platform that helps customers find what they need quickly and easily. (sample copy)", "Market Now 是一个帮助顾客快速、轻松找到心仪商品的网络购物平台。（示例文案）", "マーケットナウは、お客様が求める商品を素早く簡単に見つけられるオンラインショッピングサイトです。（紹介文の例）"], "우리의 가치": ["Our Values", "我们的价值", "私たちの価値"], "빠른 배송": ["Fast Delivery", "极速配送", "速達配送"], "주문 다음 날 받아보는 상품을 늘려 갑니다.": ["We keep adding next-day delivery products.", "持续增加次日达商品。", "翌日お届け商品を増やしています。"], "믿을 수 있는 판매": ["Trusted Selling", "值得信赖的销售", "信頼できる販売"], "판매자 심사와 상품 검수로 품질을 지킵니다.": ["We protect quality through seller screening and product checks.", "通过卖家审核与商品检验守护品质。", "出品者審査と商品検品で品質を守ります。"], "함께 성장": ["Growing Together", "共同成长", "ともに成長"], "중소 판매자가 더 많은 고객을 만나도록 돕습니다.": ["We help small sellers reach more customers.", "帮助中小卖家接触更多顾客。", "中小の出品者がより多くのお客様と出会えるよう支えています。"], "회사 정보": ["Company Info", "公司信息", "会社情報"], "회사명": ["Company", "公司名称", "会社名"], "대표": ["CEO", "代表", "代表"], "주소": ["Address", "地址", "住所"], "(예시)": ["(sample)", "（示例）", "（例）"], "님, 안녕하세요": [", welcome", "，欢迎您", "さん、ようこそ"], "마이페이지": ["My Page", "我的页面", "マイページ"], "로그인하면 주문, 찜한 상품, 쿠폰을 한 곳에서 볼 수 있어요": ["Log in to see your orders, favorites and coupons in one place.", "登录后即可在一处查看订单、收藏和优惠券。", "ログインすると、注文・お気に入り・クーポンをまとめて確認できます。"], "로그인하고 주문내역과 찜한 상품을 확인해 보세요": ["Log in to check your orders and favorites.", "登录后查看订单与收藏。", "ログインして注文履歴とお気に入りをご確認ください。"], "주문 현황": ["Order Status", "订单状态", "注文状況"], "최근 30일 (예시)": ["Last 30 days (sample)", "最近30天（示例）", "過去30日（例）"], "결제완료": ["Paid", "已付款", "決済完了"], "배송준비": ["Preparing", "备货中", "配送準備中"], "배송중": ["Shipping", "配送中", "配送中"], "배송완료": ["Delivered", "已送达", "配達完了"], "찜한 상품이 없어요. 마음에 드는 상품에 ♡를 눌러 보세요.": ["No favorites yet. Tap ♡ on products you like.", "还没有收藏的商品，点击喜欢的商品上的♡即可收藏。", "お気に入り商品はまだありません。気に入った商品の♡を押してみてください。"], "찜한 상품이 없어요": ["No favorites yet", "还没有收藏的商品", "お気に入り商品はありません"], "찜한 상품": ["Favorites", "收藏商品", "お気に入り商品"], "메뉴": ["Menu", "菜单", "メニュー"], "주문/배송 문의": ["Order & Shipping Inquiry", "订单/配送咨询", "注文・配送のお問い合わせ"], "반품/교환": ["Returns & Exchange", "退换货", "返品・交換"], "고객센터": ["Customer Service", "客服中心", "カスタマーサポート"], "쿠폰함": ["Coupon Box", "优惠券箱", "クーポンボックス"], "쿠폰": ["Coupons", "优惠券", "クーポン"], "적립금": ["Points", "积分", "ポイント"], "로그아웃": ["Log Out", "退出登录", "ログアウト"], "장바구니가 비어 있어요": ["Your cart is empty", "购物车是空的", "カートは空です"], "쇼핑 계속하기": ["Keep Shopping", "继续购物", "買い物を続ける"], "장바구니": ["Cart", "购物车", "カート"], "상품금액": ["Subtotal", "商品金额", "商品金額"], "배송비": ["Shipping", "运费", "送料"], "무료": ["Free", "免运费", "無料"], "결제 예정 금액": ["Total", "应付金额", "お支払い金額"], "주문하기": ["Checkout", "去结算", "注文する"], "3만원 이상 구매 시 무료배송 (데모)": ["Free shipping over ₩30,000 (demo)", "满3万韩元免运费（演示）", "3万ウォン以上で送料無料（デモ）"], "삭제": ["Remove", "删除", "削除"], "주문/결제": ["Order & Payment", "订单/付款", "注文・決済"], "결제하기 (데모)": ["Pay (demo)", "付款（演示）", "支払う（デモ）"], "주문할 상품이 없어요": ["No items to order", "没有可订购的商品", "ご注文商品がありません"], "검색 결과가 없어요. 다른 키워드로 검색해 보세요.": ["No results. Try another keyword.", "没有搜索结果，请尝试其他关键词。", "検索結果がありません。別のキーワードで検索してみてください。"], "준비 중인 상품입니다": ["Coming soon", "即将上线", "準備中の商品です"], "카테고리 편집": ["Edit Categories", "编辑分类", "カテゴリーを編集"], "초기화": ["Reset", "重置", "リセット"], "완료": ["Done", "完成", "完了"], "계열": ["Series", "系列", "シリーズ"], "장바구니에 담았어요": ["Added to cart", "已加入购物车", "カートに追加しました"], "상품명과 판매가를 입력해 주세요": ["Please enter product name and price", "请输入商品名称和售价", "商品名と販売価格を入力してください"], "검색어를 입력해 주세요": ["Please enter a search term", "请输入搜索词", "検索語を入力してください"], "로그인 후 바로 구매할 수 있어요": ["Please log in to buy now", "登录后即可立即购买", "ログイン後に今すぐ購入できます"], "로그인 후 주문할 수 있어요": ["Please log in to order", "登录后即可下单", "ログイン後にご注文いただけます"], "주문이 접수되었습니다 (데모)": ["Order received (demo)", "订单已受理（演示）", "ご注文を受け付けました（デモ）"], "주문이 접수되었습니다. 찜한 상품에서 삭제했어요": ["Order received. Removed from favorites.", "订单已受理，已从收藏中删除", "ご注文を受け付けました。お気に入りから削除しました"], "카테고리를 기본 상태로 되돌렸어요": ["Categories reset to default", "分类已恢复默认", "カテゴリーを初期状態に戻しました"], "로그아웃되었습니다": ["Logged out", "已退出登录", "ログアウトしました"], "로그인되었습니다": ["Logged in", "已登录", "ログインしました"], "가입을 환영합니다!": ["Welcome!", "欢迎加入！", "ご登録ありがとうございます！"], "판매자 가입이 완료되었어요": ["Seller registration complete", "卖家注册已完成", "出品者登録が完了しました"], "판매자 가입은 로그인 후 가능해요": ["Log in to register as a seller", "登录后即可注册卖家", "ログイン後に出品者登録できます"], "상품이 등록되었어요": ["Product registered", "商品已登记", "商品を登録しました"], "문의가 접수되었습니다": ["Inquiry received", "咨询已提交", "お問い合わせを受け付けました"], "이메일 형식을 확인해 주세요": ["Please check your email format", "请检查邮箱格式", "メール形式をご確認ください"], "비밀번호는 6자 이상이어야 해요": ["Password must be at least 6 characters", "密码至少需要6位", "パスワードは6文字以上にしてください"], "비밀번호는 8자 이상이어야 해요": ["Password must be at least 8 characters", "密码至少需要8位", "パスワードは8文字以上にしてください"], "이름을 입력해 주세요": ["Please enter your name", "请输入姓名", "お名前を入力してください"], "비밀번호가 일치하지 않아요": ["Passwords do not match", "两次输入的密码不一致", "パスワードが一致しません"], "약관에 동의해 주세요": ["Please agree to the terms", "请同意条款", "利用規約に同意してください"], "사업자등록번호 10자리를 확인해 주세요": ["Please check the 10-digit business number", "请确认10位营业执照号", "事業者番号（10桁）をご確認ください"], "연락처 형식을 확인해 주세요": ["Please check the phone number format", "请检查联系电话格式", "連絡先の形式をご確認ください"], "문의 내용을 입력해 주세요": ["Please enter your inquiry", "请输入咨询内容", "お問い合わせ内容を入力してください"], "판매 신청이 접수되었습니다": ["Application received", "申请已受理", "申請を受け付けました"], "입점/판매 신청이 접수되었습니다 (데모)": ["Application received (demo)", "入驻申请已受理（演示）", "出店・販売申請を受け付けました（デモ）"], "설명 예시": ["sample", "示例", "例"]};
+const NUM_RE = [["리뷰 ([\\d,]+)개", ["Reviews: $1", "评价 $1条", "レビュー $1件"]], ["^([\\d,]+)명$", ["$1 people", "$1人", "$1人"]], ["👍 ([\\d,]+)명이 도움이 됐어요", ["👍 $1 found this helpful", "👍 $1人觉得有用", "👍 $1人が役に立ったと回答"]], ["장바구니 \\((\\d+)종\\)", ["Cart ($1 items)", "购物车（$1种）", "カート（$1点）"]], ["등록 상품 (\\d+)개", ["Products: $1", "已登记 $1 件", "登録 $1 件"]], ["(\\d+)개 모델", ["$1 models", "$1款", "$1モデル"]], ["· (\\d+)개", ["· $1 pcs", "· $1件", "· $1点"]], ["검색 결과 (\\d+)건", ["Search results: $1", "搜索结果：$1条", "検索結果：$1件"]]].map(([p, v]) => [new RegExp(p), v]);
+const PHRASES = Object.entries(PH).sort((a, b) => b[0].length - a[0].length);
+// 문자열을 선택 언어로 바꿈: 숫자 패턴 → 문구 → 원화 기호
+function trText(s, L){
+  if (L === 'ko' || !s) return s;
+  const i = L === 'en' ? 0 : L === 'zh' ? 1 : 2;
+  NUM_RE.forEach(([re, v]) => { s = s.replace(re, v[i]); });
+  PHRASES.forEach(([ko, v]) => { if (s.includes(ko)) s = s.split(ko).join(v[i]); });
+  return s.replace(/([\d,]+)원/g, '₩$1');
+}
+// 화면의 글자와 입력창 안내 문구를 선택 언어로 바꿈 (원문은 보관해 되돌릴 수 있게)
+function localizeDom(root){
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const list = []; while (w.nextNode()) list.push(w.currentNode);
+  list.forEach(n => {
+    const p = n.parentNode; if (!p || /^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)) return;
+    if (n.__ko === undefined) { if (!/[가-힣]/.test(n.nodeValue)) return; n.__ko = n.nodeValue; }
+    const v = trText(n.__ko, LANG); if (n.nodeValue !== v) n.nodeValue = v;
+  });
+  root.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
+    if (el.hasAttribute('data-i18n-ph')) return;
+    if (el.__ph === undefined) el.__ph = el.getAttribute('placeholder');
+    el.setAttribute('placeholder', trText(el.__ph, LANG));
+  });
+}
+// 방문 기록: 이전 페이지 버튼이 사용
+const NAV = [];
+function goBack(){ if (NAV.length > 1) { NAV.pop(); location.hash = NAV[NAV.length-1]; } else { location.hash = '#/home'; } }
+try {
+  const c = JSON.parse(localStorage.getItem('mn4_cats')); if (c && Array.isArray(c.order)) S.cats = c;
+  S.cart = JSON.parse(localStorage.getItem('mn4_cart')) || [];
+  S.fav = JSON.parse(localStorage.getItem('mn4_fav')) || [];
+  S.seller = (() => { try { return JSON.parse(localStorage.getItem('mn5_seller')); } catch(e) { return null; } })();
+  S.items = (() => { try { return JSON.parse(localStorage.getItem('mn5_items')) || []; } catch(e) { return []; } })();
+  S.items.forEach(x => PRODUCTS.push(x));
+} catch(e) {}
+{ const known = CATS.map(c=>c.id);
+  S.cats.order = S.cats.order.filter(id=>known.includes(id)).concat(known.filter(id=>!S.cats.order.includes(id)));
+  S.cats.hidden = (S.cats.hidden||[]).filter(id=>known.includes(id));
+}
+const save = () => { try { localStorage.setItem('mn4_cats', JSON.stringify(S.cats)); localStorage.setItem('mn4_cart', JSON.stringify(S.cart)); localStorage.setItem('mn4_fav', JSON.stringify(S.fav)); } catch(e) {} };
+
+// 배너 (스와이프/자동 넘김)
+const bannerHTML = (list, cls) => `<div class="${cls}"><div class="track">${list.map(b=>`<div class="slide" style="background:${b.bg}"><div>${b.s?`<small>${b.s}</small>`:''}<h3>${b.t}</h3></div><span class="deco">${b.e||''}</span></div>`).join('')}</div><button class="arr l" data-nav="-1" aria-label="이전">‹</button><button class="arr r" data-nav="1" aria-label="다음">›</button><div class="dots">${list.map(()=>'<i></i>').join('')}</div></div>`;
+function go(c, n){
+  const N = c.querySelectorAll('.slide').length;
+  c._i = ((c._i||0) + n + N) % N;
+  c.querySelector('.track').style.transform = `translateX(-${c._i*100}%)`;
+  c.querySelectorAll('.dots i').forEach((d,k)=>d.classList.toggle('on', k===c._i));
+}
+let swipe = null;
+document.addEventListener('pointerdown', e => { const c = e.target.closest('.ad, .hero'); if (c && !e.target.closest('button')) swipe = {c, x:e.clientX}; });
+document.addEventListener('pointerup', e => { if (!swipe) return; const d = e.clientX - swipe.x, c = swipe.c; swipe = null; if (Math.abs(d) > 40) go(c, d < 0 ? 1 : -1); });
+setInterval(() => document.querySelectorAll('.ad, .hero').forEach(c => go(c, 1)), 5000);
+
+// 낙엽 장식 (은은하게 흔들리며 떨어짐)
+for (let i = 0; i < 6; i++) {
+  const l = document.createElement('span'); l.className = 'leaf'; l.textContent = i % 2 ? '🍁' : '🍂';
+  l.style.left = (8 + Math.random()*84) + 'vw'; l.style.animationDuration = (20 + Math.random()*10) + 's'; l.style.animationDelay = (-Math.random()*20) + 's';
+  document.body.appendChild(l);
+}
+
+// 카테고리 드로어
+const drawer = $('#drawer'), overlay = $('#overlay');
+function setDrawer(on){ drawer.classList.toggle('open', on); overlay.classList.toggle('open', on); }
+const catHref = id => id === 'seller' ? '#/seller' : id === 'travel' ? '#/travel' : '#/cat/' + id;
+function renderCats(){
+  if (!S.edit) {
+    $('#catList').innerHTML = S.cats.order.filter(id=>!S.cats.hidden.includes(id)).map(id => {
+      const c = CATS.find(x=>x.id===id); return `<li><a href="${catHref(c.id)}">${c.e} ${tr('cat_'+c.id)}</a></li>`;
+    }).join('');
+    $('#dfoot').innerHTML = `<button class="ed" id="editBtn">카테고리 편집</button>`;
+  } else {
+    $('#catList').innerHTML = S.cats.order.map((id,i) => {
+      const c = CATS.find(x=>x.id===id);
+      return `<li class="ed-row" draggable="true" data-i="${i}"><label><input type="checkbox" data-h="${id}" ${S.cats.hidden.includes(id)?'':'checked'}><span>⠿</span>${c.e} ${c.n}</label><button data-mv="-1" data-i="${i}" aria-label="위로">▲</button><button data-mv="1" data-i="${i}" aria-label="아래로">▼</button></li>`;
+    }).join('');
+    $('#dfoot').innerHTML = `<button class="ed ghost" id="resetBtn">초기화</button><button class="ed" id="doneBtn">완료</button>`;
+  }
+}
+function move(a, b){ const o = S.cats.order; if (b<0 || b>=o.length || a===b) return; o.splice(b,0,o.splice(a,1)[0]); persist(); }
+function persist(){ save(); renderCats(); }
+let dragI = null;
+const list = $('#catList');
+list.addEventListener('change', e => {
+  const h = e.target.dataset.h; if (!h) return;
+  const hid = S.cats.hidden, k = hid.indexOf(h);
+  if (e.target.checked && k > -1) hid.splice(k,1);
+  if (!e.target.checked && k < 0) hid.push(h);
+  persist();
+});
+list.addEventListener('dragstart', e => { const li = e.target.closest('li'); if (li) dragI = +li.dataset.i; });
+list.addEventListener('dragover', e => { if (!S.edit) return; e.preventDefault(); e.target.closest('li')?.classList.add('over'); });
+list.addEventListener('dragleave', e => e.target.closest('li')?.classList.remove('over'));
+list.addEventListener('drop', e => { e.preventDefault(); const li = e.target.closest('li'); if (li) move(dragI, +li.dataset.i); });
+
+// 헤더 우측
+function updateHeader(){
+  const n = S.cart.reduce((a,c)=>a+c.q, 0);
+  const cart = `<a href="#/cart">${tr('cart')}<span class="badge">${n}</span></a>`;
+  $('#icons').innerHTML = '<div class="ig">' + (S.user
+    ? `<a href="#/my"><b style="font-weight:700;color:var(--ink)">${esc(S.user.name)}</b>님</a><a href="#/mypage">${tr('mypage')}</a><a href="#/sellerhome" class="sellpill">${tr('sellercenter')}</a>${cart}`
+    : `<a href="#/login">${tr('login')}</a><a href="#/signup">${tr('signup')}</a><a href="#/mypage">${tr('mypage')}</a><a href="#/seller" class="sellpill">${tr('sellpill')}</a>${cart}`) + '</div>';
+}
+
+// 상품 카드
+function badgeOf(p){
+  return disc(p) >= 50 ? '<span class="bdg sale">SALE</span>' : p.s >= 95 ? '<span class="bdg">BEST</span>' : p.x ? '<span class="bdg new">NEW</span>' : '';
+}
+const card = p => `<article class="card">${badgeOf(p)}<button class="hrt" data-hfav="${p.id}" aria-label="즐겨찾기">${S.fav.includes(p.id) ? '♥' : '♡'}</button><a class="cl" href="#/p/${p.id}"><div class="thumb">${p.e}</div><div class="pinfo"><div class="pname">${esc(p.n)}</div><div class="rs">${p.rc ? `★ ${p.r} · 👍 ${p.s}%` : '신규 상품'}</div><div><span class="rate">${disc(p)}%</span><span class="price">${won(p.p)}</span></div><div class="orig">${won(p.o)}</div>${p.x?`<span class="tag">${tr('nextday')}</span>`:''}</div></a><a class="add" href="#/p/${p.id}">${tr('pick')}</a></article>`;
+const grid = l => `<div class="grid">${l.map(card).join('')}</div>`;
+
+// 오른쪽 박스 (판매 시작 / 가을 여행 / 금주의 특가왕)
+function sideBoxes(){
+  const trip = PRODUCTS.filter(x=>x.cat==='travel');
+  const maxD = trip.reduce((m,p)=>Math.max(m,disc(p)),0);
+  const top = PRODUCTS.reduce((a,b)=>disc(b)>disc(a)?b:a);
+  return `<a class="pbox seller" href="#/seller"><small>${tr('sb1s')}</small><b>${tr('sb1')}</b><span class="ico">🏪</span><span class="go">›</span></a>
+  <a class="pbox autumn" href="#/travel"><small>${tr('sb2s')}</small><b>${tr('sb2')}<br>~${maxD}%</b><span class="ico">🍁</span><span class="go">›</span></a>
+  <a class="pbox deal" href="#/p/${top.id}"><small>${tr('sb3s')} · ${disc(top)}%</small><b>${esc(top.n)}</b><span class="ico">${top.e}</span><span class="go">›</span></a>`;
+}
+
+// 장바구니
+function addCart(id, sz, op, q){
+  const c = S.cart.find(x=>x.id===id && x.sz===sz && x.op===op);
+  c ? c.q += q : S.cart.push({id, sz, op, q});
+  save(); updateHeader(); toast('장바구니에 담았어요');
+}
+let PQ = {id:0, q:1};
+function selOK(p){
+  const f = $('#buyForm'); if (!f) return null;
+  const sz = f.elements.sz ? f.elements.sz.value : '';
+  const op = f.elements.op ? f.elements.op.value : '';
+  if (p.sz && !sz) { toast('사이즈를 선택해 주세요'); return null; }
+  if (p.ch.length && !op) { toast('옵션을 선택해 주세요'); return null; }
+  return {sz, op};
+}
+
+// 화면(뷰)
+// 눈여겨볼 브랜드: 같은 계열(fam) 상품을 묶은 섹션
+// 미리보기 n개 + 나머지는 "전체 더보기"를 누르면 펼쳐지는 박스
+function moreBox(list, n = 4){
+  return `<div class="mbox">${grid(list.slice(0, n))}${list.length > n ? `<details class="mdet"><summary>전체 더보기 (${list.length}개)</summary>${grid(list.slice(n))}</details>` : ''}</div>`;
+}
+function brandSec(fid){
+  const b = PRODUCTS.find(x=>x.id===fid); if (!b) return '';
+  const l = PRODUCTS.filter(x=>x.fam===fid);
+  return `<section class="sec brand"><div class="sh"><div><span class="kicker">👀 ${tr('brand')}</span><h2><a href="#/fam/${fid}">${esc(b.n)} ${tr('series')} ›</a></h2></div></div><div class="grid bgrid">${l.map(card).join('')}</div></section>`;
+}
+const V = {
+  home: () => `<div class="home"><div class="main-col">
+      ${bannerHTML(HERO.map((h,i)=>({...h,t:tr('h'+i+'t'),s:tr('h'+i+'s')})),'hero')}
+      <nav class="catgrid">${CATS.filter(c=>c.id!=='seller').slice(0,10).map(c=>`<a href="${catHref(c.id)}"><span>${c.e}</span>${tr('cat_'+c.id).split('/')[0]}</a>`).join('')}</nav>
+      ${brandSec(13)}${brandSec(4)}${brandSec(2)}
+    </div><aside class="side">${sideBoxes()}</aside></div>`,
+  homeLegacy: () => {
+    const deals = [...PRODUCTS].sort((a,b)=>disc(b)-disc(a)).slice(0,6);
+    const picks = PRODUCTS.filter(x=>x.r>=4.7 && x.cat!=='travel').slice(0,4);
+    return `<div class="home"><div class="main-col">
+      ${bannerHTML(HERO,'hero')}
+      <nav class="catgrid">${CATS.filter(c=>c.id!=='seller').slice(0,10).map(c=>`<a href="${catHref(c.id)}"><span>${c.e}</span>${tr('cat_'+c.id).split('/')[0]}</a>`).join('')}</nav>
+      <section class="sec"><div class="sh"><h2>오늘 판매 특가</h2><span class="sub">할인율이 높은 순</span></div>${grid(deals)}</section>
+      ${brandSec(13)}
+      <section class="sec"><div class="sh"><h2>오늘의 발견</h2><span class="sub">만족도가 높은 추천 상품</span><a class="more" href="#/picks">전체보기 ›</a></div><div class="disc-grid">${picks.map(p=>`<a class="dcard" href="#/p/${p.id}"><span class="de">${p.e}</span><div><b>${esc(p.n)}</b><small>${esc(p.d)}</small></div><em>★ ${p.r} · 👍 ${p.s}%</em></a>`).join('')}</div></section>
+      ${brandSec(4)}
+      <section class="sec"><div class="sh"><h2>추천 상품</h2></div>${grid(PRODUCTS.filter(x=>x.cat!=='travel').slice(0,12))}</section>
+      ${brandSec(2)}
+    </div><aside class="side">${sideBoxes()}</aside></div>`;
+  },
+  travel: (sub) => {
+    const groups = sub ? TRIP_GROUPS.filter(g=>g.k===sub) : TRIP_GROUPS;
+    const chips = `<nav class="chips"><a href="#/travel" class="${sub?'':'on'}">전체</a>${TRIP_GROUPS.map(g=>`<a href="#/travel/${g.k}" class="${sub===g.k?'on':''}">${g.e} ${g.t.split(' · ')[0]}</a>`).join('')}</nav>`;
+    return `<div class="hero-t"><h1>가을 여행 나들이</h1><p>가족과 함께 떠나는 가을, 테마파크부터 단풍 패키지까지 한 곳에서 골라 보세요.</p><span class="big">🍁</span></div>
+    ${chips}
+    ${groups.map(g=>{const l=PRODUCTS.filter(p=>p.g===g.k); return `<section class="sec"><div class="sh"><h2>${g.e} ${g.t}</h2><span class="sub">${g.d}</span></div><div class="tgrid">${l.map(card).join('')}</div></section>`;}).join('')}`;
+  },
+  cat: id => { if (id === 'travel') return V.travel(); const c = CATS.find(x=>x.id===id); const l = PRODUCTS.filter(p=>p.cat===id);
+    return `<section class="sec"><div class="sh"><h2>${c?`${c.e} ${c.n}`:'카테고리'}</h2></div>${l.length?grid(l):'<p class="empty">준비 중인 상품입니다</p>'}</section>`; },
+  search: (_, q) => { const k = (q.get('q')||'').trim(); const l = PRODUCTS.filter(p=>p.n.includes(k));
+    return `<section class="sec"><div class="sh"><h2>"${esc(k)}" 검색 결과 ${l.length}건</h2></div>${l.length?grid(l):'<p class="empty">검색 결과가 없어요. 다른 키워드로 검색해 보세요.</p>'}</section>`; },
+
+  p: id => {
+    const p = PRODUCTS.find(x=>x.id==id);
+    if (!p) return `<section class="sec empty">상품을 찾을 수 없어요</section>`;
+    if (PQ.id !== p.id) PQ = {id:p.id, q:1};
+    const cat = CATS.find(c=>c.id===p.cat);
+    const fav = S.fav.includes(p.id);
+    const sat = Math.round(p.rc * p.s / 100);
+    const sizeHTML = p.sz ? `<div><label>사이즈</label><div class="sizes">${['S','M','L','XL','XXL'].map(s=>`<label class="sz"><input type="radio" name="sz" value="${s}"><span>${s}</span></label>`).join('')}</div>
+      <details><summary>사이즈 가이드</summary><table class="guide"><tr><th>사이즈</th><th>가슴둘레</th><th>어깨너비</th></tr><tr><td>S</td><td>96cm</td><td>44cm</td></tr><tr><td>M</td><td>100cm</td><td>46cm</td></tr><tr><td>L</td><td>104cm</td><td>48cm</td></tr><tr><td>XL</td><td>108cm</td><td>50cm</td></tr><tr><td>XXL</td><td>112cm</td><td>52cm</td></tr></table></details></div>` : '';
+    const opHTML = p.ch.length ? `<label>${p.sz?'색상':'선택 옵션'}<select name="op"><option value="">선택해 주세요</option>${p.ch.map(c=>`<option>${c}</option>`).join('')}</select></label>` : '';
+    const others = PRODUCTS.filter(x=>x.fam===p.fam && x.id!==p.id);
+    const cols = [p, ...others];
+    const rows = [['판매가', c=>won(c.p)], ['정가', c=>won(c.o)], ['할인율', c=>disc(c)+'%'], ['별점', c=>'★ '+c.r], ['만족도', c=>'👍 '+c.s+'%'], ['배송', c=>c.x?'익일배송':'일반배송']];
+    const compare = `<div class="tbl-wrap"><table><tr><th></th>${cols.map(c=>`<th><a href="#/p/${c.id}"><span class="ce">${c.e}</span>${esc(c.n)}</a></th>`).join('')}</tr>${rows.map(r=>`<tr><td>${r[0]}</td>${cols.map(c=>`<td>${r[1](c)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+    return `
+    <section class="sec pd">
+      <div><div class="thumb big">${p.e}</div></div>
+      <div>
+        <div class="muted crumb"><a href="#/cat/${p.cat}">${cat?cat.n:''}</a> › ${esc(p.n)}</div>
+        <h1>${esc(p.n)}</h1>
+        <p class="desc">${esc(p.d)}</p>
+        <div class="stars">${stars(p.r)}<b>${p.r}</b></div>
+        <div class="muted">리뷰 ${fmt(p.rc)}개</div>
+        <div class="thumbs">👍 <b>${fmt(sat)}명</b>이 만족했어요 <b>(${p.s}%)</b></div>
+        <div class="pprice"><span class="rate">${disc(p)}%</span><span class="price">${won(p.p)}</span></div>
+        <div class="muted">정가 ${won(p.o)}</div>
+        <form id="buyForm" class="opts" onsubmit="return false">${sizeHTML}${opHTML}</form>
+        <div class="qty"><button data-pq="-1">−</button><span id="pq">${PQ.q}</span><button data-pq="1">+</button></div>
+        <div class="total">총 상품금액 <b id="ptot">${won(p.p*PQ.q)}</b></div>
+        <div class="actions">
+          <button class="fav ${fav?'on':''}" data-fav="${p.id}">${fav?'♥ 즐겨찾기 됨':'♡ 즐겨찾기'}</button>
+          <button class="ed ghost" data-addp="${p.id}">장바구니 담기</button>
+          <button class="ed" data-buy="${p.id}">바로 구매</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="subh">상품 설명 · 상품평</h2>
+      <p style="color:#4e4640">${esc(p.d)}. 상세 이미지와 사용 방법은 실제 상품 페이지에서 확인할 수 있습니다. (설명 예시)</p>
+      <div style="margin-top:12px">${REVIEWS.map(r=>`<div class="rv"><div class="who">${r.who} <span class="stars" style="font-size:13px">${'★'.repeat(r.r)}${'☆'.repeat(5-r.r)}</span></div><div class="txt">${r.t}</div><div class="muted">👍 ${r.l}명이 도움이 됐어요</div></div>`).join('')}</div>
+    </section>
+
+    <section class="sec"><h2 class="subh">같은 계열 상품 비교</h2>${compare}</section>
+
+    <section class="sec"><h2 class="subh">상품 문의</h2>
+      <div class="rv"><div class="who">Q. 사이즈가 실제와 다른가요?</div><div class="txt">A. 사이즈 가이드의 치수를 기준으로 제작되며, 개인차가 있을 수 있어요.</div></div>
+      <div class="rv"><div class="who">Q. 재고가 없으면 언제 입고되나요?</div><div class="txt">A. 재입고 일정은 판매자가 등록하며, 상품 페이지에 안내됩니다.</div></div>
+      <form id="pInqForm" style="margin-top:12px"><textarea name="body" rows="3" placeholder="궁금한 점을 남겨 주세요" style="width:100%;padding:13px 14px;border-radius:14px;background:var(--soft)"></textarea><div class="err"></div><button class="btn inline" style="margin-top:10px">문의 등록</button></form>
+    </section>
+
+    <section class="sec"><h2 class="subh">배송 · 교환 · 반품 안내</h2>
+      <details open><summary>🚚 배송 안내</summary><p>3만원 이상 구매 시 무료배송, 미만은 3,000원입니다. 익일배송 표시 상품은 평일 오후 2시 이전 주문 시 다음 날 도착합니다. 도서산간 지역은 추가 배송비가 발생할 수 있어요.</p></details>
+      <details><summary>🔄 교환 안내</summary><p>수령 후 7일 이내 마이메뉴에서 교환을 신청할 수 있어요. 사용하지 않은 원래 상태로 반송해 주세요. 단순 변심의 경우 교환 배송비는 고객 부담입니다.</p></details>
+      <details><summary>↩️ 반품 안내</summary><p>수령 후 7일 이내 신청 가능합니다. 상품 훼손이나 사용 흔적이 있으면 반품이 제한될 수 있어요. 환불은 반품 상품 확인 후 영업일 기준 3일 내 처리됩니다.</p></details>
+    </section>`;
+  },
+
+  delivery: sub => {
+    const fast = sub !== 'free';
+    return `<div class="hero-t" style="background:linear-gradient(120deg,#0d4e7a,#3ea6e0)"><h1>${fast ? '🚚 빠른배송' : '🎁 무료배송'}</h1><p>${fast ? '오늘 주문하면 내일 도착, 평일 14시 이전 주문 기준' : '3만원 이상 구매 시 배송비 무료, 미만은 3,000원'}</p></div>
+    <nav class="chips"><a href="#/delivery/fast" class="${fast ? 'on' : ''}">🚚 빠른배송</a><a href="#/delivery/free" class="${fast ? '' : 'on'}">🎁 무료배송</a></nav>
+    <section class="sec"><div class="sh"><h2>${fast ? '빠른배송 안내' : '무료배송 안내'}</h2></div>
+      ${fast
+        ? `<details open><summary>⏰ 주문 마감 시간</summary><p>평일 14시 이전 결제 완료 상품은 다음 날 도착합니다. 주말과 공휴일 주문은 다음 영업일 기준입니다.</p></details><details><summary>📦 익일배송 대상</summary><p>상품 카드의 "익일배송" 표시가 있는 상품이 대상입니다. 판매자 출고 상황에 따라 달라질 수 있어요.</p></details><details><summary>📍 제외 지역</summary><p>도서산간 일부 지역은 빠른배송이 제외되며, 일반 배송으로 안내됩니다.</p></details>`
+        : `<details open><summary>🎁 무료배송 조건</summary><p>상품 금액 합계가 3만원 이상이면 배송비가 무료입니다. 3만원 미만은 3,000원이 부과됩니다.</p></details><details><summary>📍 추가 배송비</summary><p>도서산간 지역은 무료배송 조건과 관계없이 추가 배송비가 발생할 수 있어요.</p></details><details><summary>🚫 제외 상품</summary><p>일부 대형 상품과 판매자 직접 배송 상품은 무료배송 대상에서 제외됩니다.</p></details>`}
+    </section>`;
+  },
+  mypage: () => {
+    if (!S.user) return `<section class="sec empty"><p>로그인하면 주문, 찜한 상품, 쿠폰을 한 곳에서 볼 수 있어요</p><p style="margin-top:14px"><a class="btn inline" href="#/login">로그인</a></p></section>`;
+    const fav = PRODUCTS.filter(p => S.fav.includes(p.id));
+    return `<section class="sec"><div class="sh"><div><span class="kicker">마이페이지</span><h2>${esc(S.user.name)}님, 안녕하세요</h2></div><span class="sub">${esc(S.user.email)}</span></div>
+      <div class="mp-stats"><a href="#/cart"><b>${S.cart.length}</b>장바구니</a><a href="#/mypage"><b>${fav.length}</b>찜한 상품</a><a href="#/home"><b>2</b>쿠폰</a><a href="#/home"><b>2,000원</b>적립금</a></div></section>
+      <section class="sec"><div class="sh"><h2>주문 현황</h2><span class="sub">최근 30일 (예시)</span></div><div class="mp-steps"><div><b>0</b>결제완료</div><div><b>1</b>배송준비</div><div><b>0</b>배송중</div><div><b>2</b>배송완료</div></div></section>
+      <section class="sec"><div class="sh"><h2>찜한 상품</h2></div>${fav.length ? moreBox(fav, 4) : '<p class="empty">찜한 상품이 없어요</p>'}</section>
+      <section class="sec"><div class="sh"><h2>메뉴</h2></div><div class="menu"><a href="#/cs">주문/배송 문의</a><a href="#/cs">반품/교환</a><a href="#/seller">판매자 가입</a><a href="#/sellerhome">판매자 센터</a><a href="#/cs">고객센터</a><button data-logout>로그아웃</button></div></section>`;
+  },
+  sellerhome: () => {
+    if (!S.seller) return `<section class="sec empty"><p>아직 판매자 가입 전이에요</p><p style="margin-top:14px"><a class="btn inline" href="#/seller">판매자 가입하기</a></p></section>`;
+    const mine = S.items || [];
+    const catName = (CATS.find(c=>c.id===S.seller.cat)||{}).n || '';
+    return `<section class="sec"><div class="sh"><h2>판매자 센터 · ${esc(S.seller.shop)}</h2><span class="sub">${esc(catName)} · 등록 상품 ${mine.length}개</span></div></section>
+    <section class="sec"><div class="sh"><h2>상품 등록</h2></div><form id="itemForm" class="form" style="margin:0;max-width:none;box-shadow:none;padding:0"><label>상품명</label><input name="name" required><label>판매가 (원)</label><input name="price" type="number" min="100" required><label>정가 (원, 선택)</label><input name="orig" type="number" min="100"><label>카테고리</label><select name="cat">${CATS.filter(c=>c.id!=='seller').map(c=>`<option value="${c.id}">${c.n}</option>`).join('')}</select><label>아이콘</label><select name="e">${EMOJIS.map(x=>`<option>${x}</option>`).join('')}</select><label>상품 설명</label><textarea name="desc" rows="2"></textarea><div class="err"></div><button class="btn">상품 등록</button></form></section>
+    ${mine.length ? `<section class="sec"><div class="sh"><h2>내 등록 상품</h2></div>${grid(mine)}</section>` : ''}`;
+  },
+  fam: id => {
+    const fid = +id, b = PRODUCTS.find(x=>x.id===fid);
+    if (!b) return `<section class="sec empty">계열 상품을 찾을 수 없어요</section>`;
+    const l = PRODUCTS.filter(x=>x.fam===fid);
+    return `<section class="sec"><div class="sh"><div><span class="kicker">👀 ${tr('brand')}</span><h2>${esc(b.n)} 계열</h2></div><span class="sub">${l.length}개 모델</span></div>${grid(l)}</section>`;
+  },
+  deals: () => {
+    const l = [...PRODUCTS].sort((a,b)=>disc(b)-disc(a));
+    return `<section class="sec"><div class="sh"><h2>오늘 판매 특가 전체</h2><span class="sub">할인율이 높은 순 · ${l.length}개</span></div>${grid(l)}</section>`;
+  },
+  picks: () => {
+    const l = PRODUCTS.filter(x=>x.r>=4.7);
+    return `<section class="sec"><div class="sh"><h2>오늘의 발견 전체</h2><span class="sub">만족도가 높은 추천 상품 · ${l.length}개</span></div>${grid(l)}</section>`;
+  },
+  fav: () => {
+    const l = PRODUCTS.filter(p=>S.fav.includes(p.id));
+    return `<section class="sec"><div class="sh"><h2>♥ 찜한 상품 (${l.length})</h2></div>${l.length?grid(l):'<p class="empty">찜한 상품이 없어요. 마음에 드는 상품에 ♡를 눌러 보세요.</p>'}</section>`;
+  },
+
+  order: () => {
+    const o = S.order; if (!o) return `<section class="sec empty"><p>주문할 상품이 없어요</p></section>`;
+    const p = PRODUCTS.find(x=>x.id===o.id), t = p.p * o.q, ship = t>=30000 ? 0 : 3000;
+    return `<section class="sec"><h2 class="subh">주문/결제</h2><div class="row"><div class="thumb">${p.e}</div><div class="info"><div>${esc(p.n)}</div><div class="muted">${[o.sz,o.op].filter(Boolean).join(' / ')} · ${o.q}개</div><div class="price">${won(t)}</div></div></div><div class="sum"><div><span>상품금액</span><span>${won(t)}</span></div><div><span>배송비</span><span>${ship?won(ship):'무료'}</span></div><div class="total"><span>결제 예정 금액</span><span>${won(t+ship)}</span></div></div><button class="btn" data-pay>결제하기 (데모)</button></section>`;
+  },
+
+  cart: () => {
+    if (!S.cart.length) return `<section class="sec empty"><p>장바구니가 비어 있어요</p><p style="margin-top:14px"><a class="btn inline" href="#/home">쇼핑 계속하기</a></p></section>`;
+    const items = S.cart.map((c,i) => { const p = PRODUCTS.find(x=>x.id===c.id);
+      return `<div class="row"><div class="thumb">${p.e}</div><div class="info"><a href="#/p/${p.id}">${esc(p.n)}</a><div class="muted">${[c.sz,c.op].filter(Boolean).join(' / ')}</div><div class="price">${won(p.p*c.q)}</div><div class="qty"><button data-qi="${i}" data-d="-1">−</button><span>${c.q}</span><button data-qi="${i}" data-d="1">+</button> <button data-rmi="${i}" class="muted" style="width:auto;padding:0 6px">삭제</button></div></div></div>`; }).join('');
+    const tot = S.cart.reduce((a,c)=>a + PRODUCTS.find(x=>x.id===c.id).p * c.q, 0);
+    const ship = tot >= 30000 ? 0 : 3000;
+    return `<section class="sec"><h2 class="subh">장바구니 (${S.cart.length}종)</h2>${items}<div class="sum"><div><span>상품금액</span><span>${won(tot)}</span></div><div><span>배송비</span><span>${ship?won(ship):'무료'}</span></div><div class="total"><span>결제 예정 금액</span><span>${won(tot+ship)}</span></div></div><button class="btn" data-checkout>주문하기</button><p class="muted" style="margin-top:8px">3만원 이상 구매 시 무료배송 (데모)</p></section>`;
+  },
+  login: () => `<form class="form" id="loginForm"><h2>로그인</h2><p class="muted">마켓나우에 오신 것을 환영합니다</p><label for="le">이메일</label><input id="le" name="email" type="email" placeholder="example@mail.com" required><label for="lp">비밀번호</label><input id="lp" name="pw" type="password" placeholder="6자 이상" required><div class="err"></div><button class="btn">로그인</button><p class="muted" style="text-align:center;margin-top:16px"><a href="#/signup">회원가입</a> · <a href="#/seller">판매 시작하기</a></p></form>`,
+  signup: () => `<form class="form" id="signupForm"><h2>회원가입</h2><label>이름</label><input name="name" required><label>이메일</label><input name="email" type="email" required><label>비밀번호 (8자 이상)</label><input name="pw" type="password" required><label>비밀번호 확인</label><input name="pw2" type="password" required><label class="check"><input type="checkbox" name="terms"> 이용약관 및 개인정보 처리방침에 동의합니다 (필수)</label><div class="err"></div><button class="btn">가입하기</button></form>`,
+  seller: () => `<form class="form" id="sellerForm" style="max-width:520px"><h2>판매 시작하기</h2><p class="muted">마켓나우에서 상품을 판매해 보세요</p><label>상호명</label><input name="shop" required><label>사업자등록번호</label><input name="biz" placeholder="000-00-00000" required><label>대표자명</label><input name="ceo" required><label>연락처</label><input name="tel" placeholder="010-0000-0000" required><label>주요 판매 카테고리</label><select name="cat" style="width:100%;padding:13px 14px;border-radius:12px;background:var(--soft)">${CATS.filter(c=>c.id!=='seller').map(c=>`<option value="${c.id}">${c.n}</option>`).join('')}</select><label>회사/상품 소개</label><textarea name="intro" rows="3"></textarea><div class="err"></div><button class="btn">신청하기</button></form>`,
+  cs: () => `<section class="sec"><h2 class="subh">고객센터</h2><p class="muted">운영시간 평일 09:00 – 18:00 (주말·공휴일 휴무) · 전화 1600-0000 (예시)</p></section><section class="sec"><h2 class="subh">자주 묻는 질문</h2><details open><summary>배송은 얼마나 걸리나요?</summary><p>상품 출고 후 보통 1~2일 내 도착합니다.</p></details><details><summary>주문을 취소하고 싶어요.</summary><p>마이메뉴에서 배송 준비 전 주문을 취소할 수 있어요.</p></details><details><summary>반품과 교환은 어떻게 하나요?</summary><p>수령 후 7일 이내에 마이메뉴에서 신청할 수 있습니다.</p></details></section><form class="form" id="inqForm" style="margin:20px auto"><h2>1:1 문의</h2><label>문의 유형</label><select name="type" style="width:100%;padding:13px 14px;border-radius:12px;background:var(--soft)"><option>주문/결제</option><option>배송</option><option>반품/교환</option><option>기타</option></select><label>내용</label><textarea name="body" rows="4" required></textarea><div class="err"></div><button class="btn">문의 접수</button></form>`,
+  about: () => `<section class="sec"><h2 class="subh">회사 소개</h2><p style="color:#4e4640">마켓나우는 고객이 원하는 상품을 가장 빠르고 편하게 찾을 수 있도록 돕는 온라인 쇼핑 플랫폼입니다. (소개 문구 예시)</p></section><section class="sec"><h2 class="subh">우리의 가치</h2><div class="values"><div><b>빠른 배송</b>주문 다음 날 받아보는 상품을 늘려 갑니다.</div><div><b>믿을 수 있는 판매</b>판매자 심사와 상품 검수로 품질을 지킵니다.</div><div><b>함께 성장</b>중소 판매자가 더 많은 고객을 만나도록 돕습니다.</div></div></section><section class="sec"><h2 class="subh">회사 정보</h2><p class="muted">회사명 마켓나우(주) · 대표 홍길동 · 주소 서울특별시 강남구 테헤란로 123 (예시)<br>이메일 help@marketnow.example · 사업자등록번호 000-00-00000 (예시)</p></section>`,
+  my: () => S.user
+    ? `<section class="sec"><h2 class="subh">${esc(S.user.name)}님, 안녕하세요</h2><p class="muted">${esc(S.user.email)}</p></section><section class="sec"><h2 class="subh">마이메뉴</h2><div class="menu"><a href="#/cart">장바구니 (${S.cart.length}종)</a><a href="#/fav">♥ 찜한 상품 (${S.fav.length})</a><a href="#/cs">주문/배송 문의</a><a href="#/cs">반품/교환</a><a href="#/home">쿠폰함</a><a href="#/cs">고객센터</a><button data-logout>로그아웃</button></div></section>`
+    : `<section class="sec empty"><p>로그인하고 주문내역과 찜한 상품을 확인해 보세요</p><p style="margin-top:14px"><a class="btn inline" href="#/login">로그인</a></p></section>`
+};
+
+function render(){
+  const [p, q=''] = (location.hash.slice(1) || '/home').split('?');
+  const parts = p.split('/').filter(Boolean);
+  const [n, id] = parts;
+  const cur = location.hash || '#/home';
+  if (NAV[NAV.length-1] !== cur) NAV.push(cur);
+  const back = n && n !== 'home' ? `<div class="backbar"><button class="back" id="backBtn">← 이전 페이지</button></div>` : '';
+  $('#backWrap').hidden = !(n && n !== 'home');
+  $('#app').innerHTML = (V[n] || V.home)(id, new URLSearchParams(q));
+  document.querySelectorAll('.ad, .hero').forEach(c => go(c, 0));
+  updateHeader();
+}
+window.addEventListener('hashchange', () => { render(); fillGrids(); window.scrollTo(0,0); setDrawer(false); });
+function changeQty(i, d){ const c = S.cart[i]; if (!c) return; c.q = Math.max(1, c.q + d); save(); render(); }
+function toast(m){ const t = $('#toast'); t.textContent = trText(m, LANG); t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 1800); }
+
+// 클릭 처리
+document.addEventListener('click', e => {
+  const t = e.target;
+  const lg = t.closest('[data-lang]');
+  if (lg) { LANG = lg.dataset.lang; try { localStorage.setItem('mn5_lang', LANG); } catch(e) {} applyLang(); renderCats(); render(); fillGrids(); return; }
+  if (t.closest('#backBtn')) { goBack(); return; }
+  if (t.closest('#catOpen')) { setDrawer(true); return; }
+  if (t.closest('#overlay') || t.closest('#drawerClose')) { setDrawer(false); return; }
+  if (t.closest('#catList a')) { setDrawer(false); return; }
+  if (t.closest('#editBtn')) { S.edit = true; renderCats(); return; }
+  if (t.closest('#doneBtn')) { S.edit = false; renderCats(); return; }
+  if (t.closest('#resetBtn')) { S.cats = {order:CATS.map(c=>c.id), hidden:[]}; persist(); toast('카테고리를 기본 상태로 되돌렸어요'); return; }
+  const mv = t.closest('[data-mv]'); if (mv) { move(+mv.dataset.i, +mv.dataset.i + +mv.dataset.mv); return; }
+  const nav = t.closest('[data-nav]'); if (nav) { go(nav.closest('.ad, .hero'), +nav.dataset.nav); return; }
+
+  const pq = t.closest('[data-pq]');
+  if (pq) { PQ.q = Math.max(1, PQ.q + +pq.dataset.pq); $('#pq').textContent = PQ.q; const p = PRODUCTS.find(x=>x.id===PQ.id); $('#ptot').textContent = won(p.p * PQ.q); return; }
+  const hf = t.closest('[data-hfav]');
+  if (hf) { const id = +hf.dataset.hfav, k = S.fav.indexOf(id); if (k > -1) S.fav.splice(k,1); else S.fav.push(id); save(); hf.textContent = k > -1 ? '♡' : '♥'; updateHeader(); return; }
+  const fav = t.closest('[data-fav]');
+  if (fav) {
+    const id = +fav.dataset.fav, k = S.fav.indexOf(id);
+    if (k > -1) { S.fav.splice(k,1); toast('즐겨찾기에서 뺐어요'); } else { S.fav.push(id); toast('즐겨찾기에 추가했어요'); }
+    save(); fav.classList.toggle('on', k < 0); fav.textContent = k < 0 ? '♥ 즐겨찾기 됨' : '♡ 즐겨찾기'; updateHeader(); return;
+  }
+  const addp = t.closest('[data-addp]');
+  if (addp) { const p = PRODUCTS.find(x=>x.id===+addp.dataset.addp); const s = selOK(p); if (s) addCart(p.id, s.sz, s.op, PQ.q); return; }
+  const buy = t.closest('[data-buy]');
+  if (buy) {
+    const p = PRODUCTS.find(x=>x.id===+buy.dataset.buy); const s = selOK(p);
+    if (!s) return;
+    if (!S.user) { toast('로그인 후 바로 구매할 수 있어요'); location.hash = '#/login'; return; }
+    S.order = {id:p.id, sz:s.sz, op:s.op, q:PQ.q}; location.hash = '#/order'; return;
+  }
+  if (t.closest('[data-pay]')) {
+    const pid = S.order && S.order.id;
+    if (pid != null) S.fav = S.fav.filter(id => id !== pid);
+    S.order = null; save();
+    toast('주문이 접수되었습니다. 찜한 상품에서 삭제했어요');
+    location.hash = '#/home'; return;
+  }
+
+  const qi = t.closest('[data-qi]'); if (qi) { changeQty(+qi.dataset.qi, +qi.dataset.d); return; }
+  const rmi = t.closest('[data-rmi]'); if (rmi) { S.cart.splice(+rmi.dataset.rmi, 1); save(); render(); return; }
+  if (t.closest('[data-logout]')) { S.user = null; toast('로그아웃되었습니다'); location.hash = '#/home'; render(); return; }
+  if (t.closest('[data-checkout]')) {
+    if (!S.user) { toast('로그인 후 주문할 수 있어요'); location.hash = '#/login'; return; }
+    S.fav = S.fav.filter(id => !S.cart.some(c => c.id === id));
+    S.cart = []; save();
+    toast('주문이 접수되었습니다. 찜한 상품에서 삭제했어요');
+    render(); return;
+  }
+});
+
+// 폼 제출
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, err = f.querySelector('.err');
+  const v = n => (f.elements[n] ? f.elements[n].value.trim() : '');
+  const fail = m => { if (err) err.textContent = m; };
+  if (f.id === 'searchForm') {
+    const k = v('q'); if (!k) { toast('검색어를 입력해 주세요'); return; }
+    location.hash = '#/search?q=' + encodeURIComponent(k); render(); return;
+  }
+  if (f.id === 'loginForm') {
+    const em = v('email'), pw = f.elements.pw.value;
+    if (!/^\S+@\S+\.\S+$/.test(em)) return fail('이메일 형식을 확인해 주세요');
+    if (pw.length < 6) return fail('비밀번호는 6자 이상이어야 해요');
+    S.user = {name: em.split('@')[0], email: em}; toast('로그인되었습니다'); location.hash = '#/home'; render(); return;
+  }
+  if (f.id === 'signupForm') {
+    const name = v('name'), em = v('email'), pw = f.elements.pw.value;
+    if (!name) return fail('이름을 입력해 주세요');
+    if (!/^\S+@\S+\.\S+$/.test(em)) return fail('이메일 형식을 확인해 주세요');
+    if (pw.length < 8) return fail('비밀번호는 8자 이상이어야 해요');
+    if (pw !== f.elements.pw2.value) return fail('비밀번호가 일치하지 않아요');
+    if (!f.elements.terms.checked) return fail('약관에 동의해 주세요');
+    S.user = {name, email: em}; toast('가입을 환영합니다!'); location.hash = '#/home'; render(); return;
+  }
+  if (f.id === 'sellerForm') {
+    if (!/^\d{3}-?\d{2}-?\d{5}$/.test(v('biz'))) return fail('사업자등록번호 10자리를 확인해 주세요');
+    if (!/^01\d-?\d{3,4}-?\d{4}$/.test(v('tel'))) return fail('연락처 형식을 확인해 주세요');
+    if (!S.user) { toast('판매자 가입은 로그인 후 가능해요'); location.hash = '#/login'; return; }
+    S.seller = {shop: v('shop'), cat: v('cat'), ceo: v('ceo')};
+    try { localStorage.setItem('mn5_seller', JSON.stringify(S.seller)); } catch(e) {}
+    if (err) err.textContent = ''; toast('판매자 가입이 완료되었어요'); location.hash = '#/sellerhome'; render(); return;
+  }
+  if (f.id === 'itemForm') {
+    const n = v('name'), p = +v('price'), o = +v('orig') || Math.round(p * 1.25);
+    if (!n || !p) return fail('상품명과 판매가를 입력해 주세요');
+    const id = Date.now();
+    const it = {id, cat: v('cat'), n, p, o, e: f.elements.e.value, x: 0, d: v('desc') || '판매자가 등록한 상품입니다', ch: [], sz: 0, r: 0, s: 0, rc: 0, g: '', fam: id};
+    PRODUCTS.push(it); S.items.push(it); saveItems(); f.reset(); toast('상품이 등록되었어요'); render(); return;
+  }
+  if (f.id === 'inqForm' || f.id === 'pInqForm') {
+    if (!v('body')) return fail('문의 내용을 입력해 주세요');
+    if (err) err.textContent = ''; f.reset(); toast('문의가 접수되었습니다'); return;
+  }
+});
+
+// 시작
+applyLang();
+// 이전 버튼: 헤더 바로 아래에 두고, 스크롤해도 고정
+function placeBack(){
+  const h = document.querySelector('header');
+  $('#backWrap').style.top = Math.max(12, Math.round(h.getBoundingClientRect().bottom + 10)) + 'px';
+}
+window.addEventListener('scroll', placeBack, {passive:true});
+window.addEventListener('resize', () => { placeBack(); fillGrids(); });
+const EMOJIS = ['🍁','🍂','🎁','👕','🍳','🧴','🎧','🧸','📚','🚗','🐾','✈️'];
+// 빈칸 없는 격자: 마지막 줄 상품 수에 맞춰 마지막 상품이 남은 칸을 채움
+const FILL = [];
+function fillGrids(){
+  document.querySelectorAll('.grid,.tgrid').forEach(g => {
+    g.querySelectorAll('.filltile').forEach(x => x.remove());
+    const cols = getComputedStyle(g).gridTemplateColumns.split(' ').length;
+    const rem = g.children.length % cols;
+    for (let i = 0; rem && FILL.length && i < cols - rem; i++) { const f = FILL[i % FILL.length]; const a = document.createElement('a'); a.className = 'filltile'; a.href = f.h; a.innerHTML = `<span>${f.e}</span><b>${f.t}</b><em>더 보기 ›</em>`; g.appendChild(a); }
+  });
+}
+function saveItems(){ try { localStorage.setItem('mn5_items', JSON.stringify(S.items)); } catch(e) {} }
+// 가을 세일 팝업 (오늘 하루 보지 않기)
+function setupPop(){
+  const pop = $('#pop'), close = () => { pop.hidden = true; };
+  let hide = false; try { hide = localStorage.getItem('mn5_pop') === new Date().toDateString(); } catch(e) {}
+  pop.hidden = hide;
+  $('#popX').onclick = close; $('#popGo').onclick = close;
+  $('#popToday').onclick = () => { try { localStorage.setItem('mn5_pop', new Date().toDateString()); } catch(e) {} close(); };
+}
+renderCats();
+render();
+placeBack();
+fillGrids();
+setupPop();
+document.addEventListener('toggle', fillGrids, true);
+// 화면을 다시 그릴 때마다 선택 언어로 바꿈
+const _render = render; render = function(){ _render(); localizeDom(document.body); };
+const _renderCats = renderCats; renderCats = function(){ _renderCats(); localizeDom(document.body); };
+localizeDom(document.body);
+// PC(761px 이상): 로그인 줄을 신상품 글자 왼쪽 끝 ~ 기획전 글자 오른쪽 끝에 맞춤
+function alignLogin(){
+  const ig = document.querySelector('#icons .ig'), nav = document.querySelector('.navrow'), icons = document.querySelector('#icons');
+  if (!ig || !nav || !icons) return;
+  if (window.innerWidth < 761) { ig.style.marginLeft = ''; ig.style.width = ''; return; }
+  const tabs = nav.querySelectorAll('.tab'), base = icons.getBoundingClientRect();
+  const a = tabs[2].getBoundingClientRect(), b = tabs[4].getBoundingClientRect();
+  ig.style.marginLeft = (a.left - base.left) + 'px';
+  ig.style.width = (b.right - a.left) + 'px';
+}
+const _updateHeader = updateHeader; updateHeader = function(){ _updateHeader(); alignLogin(); };
+window.addEventListener('resize', alignLogin);
+if (document.fonts) document.fonts.ready.then(alignLogin);
+alignLogin();
+</script>
+</body>
+</html>
